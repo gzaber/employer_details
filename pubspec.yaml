@@ -7,8 +7,21 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
+  app_ui:
+    path: packages/app_ui
+  details_repository:
+    path: packages/details_repository
+  isar_details_api:
+    path: packages/isar_details_api
+  settings_repository:
+    path: packages/settings_repository
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.1.3
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.0.15
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
