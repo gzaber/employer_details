@@ -4,13 +4,18 @@ class SettingsRepository {
   SettingsRepository(this._prefs);
 
   final SharedPreferences _prefs;
-  static const _settingsKey = "__settings_key__";
+  static const _themeKey = '__theme_key__';
+  static const _colorKey = '__color_key__';
 
-  Future<void> write(int setting) async {
-    await _prefs.setInt(_settingsKey, setting);
+  Future<void> writeTheme(bool theme) async {
+    await _prefs.setBool(_themeKey, theme);
   }
 
-  int? read() {
-    return _prefs.getInt(_settingsKey);
+  Future<void> writeColor(int color) async {
+    await _prefs.setInt(_colorKey, color);
+  }
+
+  (bool?, int?) readSettings() {
+    return (_prefs.getBool(_themeKey), _prefs.getInt(_colorKey));
   }
 }

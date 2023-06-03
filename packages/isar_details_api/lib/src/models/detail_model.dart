@@ -9,13 +9,13 @@ class DetailModel {
     required this.id,
     required this.iconData,
     required this.title,
-    required this.content,
+    required this.description,
     required this.position,
   });
 
   final Id id;
   final String title;
-  final String content;
+  final String description;
   final int iconData;
   final int position;
 
@@ -23,14 +23,14 @@ class DetailModel {
       : id = detail.id ?? Isar.autoIncrement,
         iconData = detail.iconData,
         title = detail.title,
-        content = detail.content,
+        description = detail.description,
         position = detail.position;
 
   Detail toDetail() {
     return Detail(
       id: id,
       title: title,
-      content: content,
+      description: description,
       iconData: iconData,
       position: position,
     );

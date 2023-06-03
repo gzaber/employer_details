@@ -32,20 +32,6 @@ class IsarDetailsApi implements DetailsApi {
   }
 
   @override
-  Future<Detail?> readDetail(int id) async {
-    late final DetailModel? detailModel;
-
-    await _isar.writeTxn(() async {
-      detailModel = await _isar.collection<DetailModel>().get(id);
-    });
-
-    if (detailModel != null) {
-      return detailModel!.toDetail();
-    }
-    return null;
-  }
-
-  @override
   Future<List<Detail>> readAllDetails() async {
     late final List<DetailModel> detailModels;
 

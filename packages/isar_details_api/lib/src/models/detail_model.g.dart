@@ -17,9 +17,9 @@ const DetailModelSchema = CollectionSchema(
   name: r'DetailModel',
   id: -1852607646288956392,
   properties: {
-    r'content': PropertySchema(
+    r'description': PropertySchema(
       id: 0,
-      name: r'content',
+      name: r'description',
       type: IsarType.string,
     ),
     r'iconData': PropertySchema(
@@ -58,7 +58,7 @@ int _detailModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.content.length * 3;
+  bytesCount += 3 + object.description.length * 3;
   bytesCount += 3 + object.title.length * 3;
   return bytesCount;
 }
@@ -69,7 +69,7 @@ void _detailModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.content);
+  writer.writeString(offsets[0], object.description);
   writer.writeLong(offsets[1], object.iconData);
   writer.writeLong(offsets[2], object.position);
   writer.writeString(offsets[3], object.title);
@@ -82,7 +82,7 @@ DetailModel _detailModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = DetailModel(
-    content: reader.readString(offsets[0]),
+    description: reader.readString(offsets[0]),
     iconData: reader.readLong(offsets[1]),
     id: id,
     position: reader.readLong(offsets[2]),
@@ -202,13 +202,14 @@ extension DetailModelQueryWhere
 
 extension DetailModelQueryFilter
     on QueryBuilder<DetailModel, DetailModel, QFilterCondition> {
-  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition> contentEqualTo(
+  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
+      descriptionEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'content',
+        property: r'description',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -216,7 +217,7 @@ extension DetailModelQueryFilter
   }
 
   QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
-      contentGreaterThan(
+      descriptionGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -224,14 +225,15 @@ extension DetailModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'content',
+        property: r'description',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition> contentLessThan(
+  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
+      descriptionLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -239,14 +241,15 @@ extension DetailModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'content',
+        property: r'description',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition> contentBetween(
+  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
+      descriptionBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -255,7 +258,7 @@ extension DetailModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'content',
+        property: r'description',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -266,50 +269,49 @@ extension DetailModelQueryFilter
   }
 
   QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
-      contentStartsWith(
+      descriptionStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'content',
+        property: r'description',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition> contentEndsWith(
+  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
+      descriptionEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'content',
+        property: r'description',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition> contentContains(
-      String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
+      descriptionContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'content',
+        property: r'description',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition> contentMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+  QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'content',
+        property: r'description',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
@@ -317,20 +319,20 @@ extension DetailModelQueryFilter
   }
 
   QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
-      contentIsEmpty() {
+      descriptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'content',
+        property: r'description',
         value: '',
       ));
     });
   }
 
   QueryBuilder<DetailModel, DetailModel, QAfterFilterCondition>
-      contentIsNotEmpty() {
+      descriptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'content',
+        property: r'description',
         value: '',
       ));
     });
@@ -640,15 +642,15 @@ extension DetailModelQueryLinks
 
 extension DetailModelQuerySortBy
     on QueryBuilder<DetailModel, DetailModel, QSortBy> {
-  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> sortByContent() {
+  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> sortByDescription() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'content', Sort.asc);
+      return query.addSortBy(r'description', Sort.asc);
     });
   }
 
-  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> sortByContentDesc() {
+  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> sortByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'content', Sort.desc);
+      return query.addSortBy(r'description', Sort.desc);
     });
   }
 
@@ -691,15 +693,15 @@ extension DetailModelQuerySortBy
 
 extension DetailModelQuerySortThenBy
     on QueryBuilder<DetailModel, DetailModel, QSortThenBy> {
-  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> thenByContent() {
+  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> thenByDescription() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'content', Sort.asc);
+      return query.addSortBy(r'description', Sort.asc);
     });
   }
 
-  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> thenByContentDesc() {
+  QueryBuilder<DetailModel, DetailModel, QAfterSortBy> thenByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'content', Sort.desc);
+      return query.addSortBy(r'description', Sort.desc);
     });
   }
 
@@ -754,10 +756,10 @@ extension DetailModelQuerySortThenBy
 
 extension DetailModelQueryWhereDistinct
     on QueryBuilder<DetailModel, DetailModel, QDistinct> {
-  QueryBuilder<DetailModel, DetailModel, QDistinct> distinctByContent(
+  QueryBuilder<DetailModel, DetailModel, QDistinct> distinctByDescription(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'content', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
     });
   }
 
@@ -789,9 +791,9 @@ extension DetailModelQueryProperty
     });
   }
 
-  QueryBuilder<DetailModel, String, QQueryOperations> contentProperty() {
+  QueryBuilder<DetailModel, String, QQueryOperations> descriptionProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'content');
+      return query.addPropertyName(r'description');
     });
   }
 
