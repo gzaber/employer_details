@@ -1,0 +1,41 @@
+name: app_ui
+
+on:
+  pull_request:
+    paths:
+      - "packages/app_ui/**"
+      - ".github/workflows/app_ui.yaml"
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  flutter_tests:
+    defaults:
+      run:
+        working-directory: packages/app_ui
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze lib
+
+      - name: Run tests
+        run: flutter test --coverage
+
+      - name: Upload coverage to codecov
+        if: github.event_name == 'push'
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov
