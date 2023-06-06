@@ -1,4 +1,6 @@
-class Detail {
+import 'package:equatable/equatable.dart';
+
+class Detail extends Equatable {
   Detail({
     this.id,
     required this.title,
@@ -28,4 +30,7 @@ class Detail {
       position: position ?? this.position,
     );
   }
+
+  @override
+  List<Object?> get props => [id, title, description, iconData, position];
 }
