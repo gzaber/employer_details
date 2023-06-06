@@ -1,0 +1,43 @@
+name: details_repository
+
+on:
+  pull_request:
+    paths:
+      - "packages/details_repository/**"
+      - ".github/workflows/details_repository.yaml"
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  dart_tests:
+    defaults:
+      run:
+        working-directory: packages/details_repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Install Dart
+        uses: dart-lang/setup-dart@v1.3
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Analyze package source
+        run: dart analyze lib
+
+      - name: Run tests
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:test_with_coverage
+
+      - name: Upload coverage to codecov
+        if: github.event_name == 'push'
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov
