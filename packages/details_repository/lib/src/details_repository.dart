@@ -17,6 +17,10 @@ class DetailsRepository {
     await _detailsApi.deleteDetail(id);
   }
 
+  Future<Detail?> readDetail(int id) async {
+    return await _detailsApi.readDetail(id);
+  }
+
   Future<List<Detail>> readAllDetails() async {
     return await _detailsApi.readAllDetails();
   }

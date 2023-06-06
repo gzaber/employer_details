@@ -4,12 +4,12 @@ import 'package:isar/isar.dart';
 part 'detail_model.g.dart';
 
 @collection
-class DetailModel {
+class DetailModel extends Equatable {
   DetailModel({
     required this.id,
-    required this.iconData,
     required this.title,
     required this.description,
+    required this.iconData,
     required this.position,
   });
 
@@ -21,9 +21,9 @@ class DetailModel {
 
   DetailModel.fromDetail(Detail detail)
       : id = detail.id ?? Isar.autoIncrement,
-        iconData = detail.iconData,
         title = detail.title,
         description = detail.description,
+        iconData = detail.iconData,
         position = detail.position;
 
   Detail toDetail() {
@@ -35,4 +35,7 @@ class DetailModel {
       position: position,
     );
   }
+
+  @override
+  List<Object> get props => [id, title, description, iconData, position];
 }
