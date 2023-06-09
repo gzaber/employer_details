@@ -8,29 +8,41 @@ import '../manage_detail.dart';
 class ManageDetailPage extends StatelessWidget {
   const ManageDetailPage({
     Key? key,
-    this.detail,
+    this.id,
   }) : super(key: key);
 
-  final Detail? detail;
+  final int? id;
 
-  static Route<bool> route({Detail? detail}) {
+  static Route<bool> route({int? id}) {
     return MaterialPageRoute(
-      builder: (_) => BlocProvider(
-        create: (context) => ManageDetailCubit(
-          detailsRepository: context.read<DetailsRepository>(),
-          detail: detail,
-        ),
-        child: ManageDetailPage(detail: detail),
-      ),
+      builder: (_) => ManageDetailPage(id: id),
       settings: const RouteSettings(name: '/manage_detail'),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ManageDetailCubit(
+        detailsRepository: context.read<DetailsRepository>(),
+      )..getDetail(id),
+      child: const ManageDetailView(),
+    );
+  }
+}
+
+class ManageDetailView extends StatelessWidget {
+  const ManageDetailView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(detail == null ? 'Create detail' : 'Update detail'),
+        title: Text(
+          context.read<ManageDetailCubit>().state.detail.id == null
+              ? 'Create detail'
+              : 'Update detail',
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -49,7 +61,7 @@ class ManageDetailPage extends StatelessWidget {
                 ),
               );
           }
-          if (state.status == ManageDetailStatus.success) {
+          if (state.status == ManageDetailStatus.saveSuccess) {
             Navigator.pop(context, true);
           }
         },
@@ -79,7 +91,9 @@ class _DetailForm extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(width: 20),
-            const _SelectIconButton(),
+            const _SelectIconButton(
+              key: Key('manageDetailPageSelectIconButtonKey'),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -88,6 +102,7 @@ class _DetailForm extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         TextField(
+          key: const Key('manageDetailPageTitleTextFieldKey'),
           controller: TextEditingController(
             text: context.read<ManageDetailCubit>().state.detail.title,
           ),
@@ -103,6 +118,7 @@ class _DetailForm extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         TextFormField(
+          key: const Key('manageDetailPageDescriptionTextFormFieldKey'),
           controller: TextEditingController(
             text: context.read<ManageDetailCubit>().state.detail.description,
           ),
@@ -119,7 +135,7 @@ class _DetailForm extends StatelessWidget {
 }
 
 class _SelectIconButton extends StatelessWidget {
-  const _SelectIconButton();
+  const _SelectIconButton({super.key});
 
   @override
   Widget build(BuildContext context) {

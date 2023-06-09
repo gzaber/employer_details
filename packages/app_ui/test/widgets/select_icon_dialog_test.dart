@@ -47,7 +47,7 @@ void main() {
         );
       });
 
-      await tester.tap(find.byKey(const Key('selectIconDialogIconAvatarKey0')));
+      await tester.tap(find.byKey(const Key('selectIconDialogIconKey0')));
 
       verify(
         () => mockNavigator.pop<IconData>(Icons.home),

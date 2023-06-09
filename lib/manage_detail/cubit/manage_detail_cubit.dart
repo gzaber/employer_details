@@ -7,9 +7,8 @@ part 'manage_detail_state.dart';
 class ManageDetailCubit extends Cubit<ManageDetailState> {
   ManageDetailCubit({
     required DetailsRepository detailsRepository,
-    Detail? detail,
   })  : _detailsRepository = detailsRepository,
-        super(ManageDetailState(detail: detail));
+        super(ManageDetailState());
 
   final DetailsRepository _detailsRepository;
 
@@ -37,11 +36,28 @@ class ManageDetailCubit extends Cubit<ManageDetailState> {
     );
   }
 
+  void getDetail(int? id) async {
+    if (id == null) return;
+    emit(state.copyWith(status: ManageDetailStatus.loading));
+    try {
+      final detail = await _detailsRepository.readDetail(id);
+      if (detail == null) throw Exception();
+      emit(
+        state.copyWith(
+          status: ManageDetailStatus.success,
+          detail: detail,
+        ),
+      );
+    } catch (_) {
+      emit(state.copyWith(status: ManageDetailStatus.failure));
+    }
+  }
+
   void saveDetail() async {
     emit(state.copyWith(status: ManageDetailStatus.loading));
     try {
       await _detailsRepository.updateDetail(state.detail);
-      emit(state.copyWith(status: ManageDetailStatus.success));
+      emit(state.copyWith(status: ManageDetailStatus.saveSuccess));
     } catch (_) {
       emit(state.copyWith(status: ManageDetailStatus.failure));
     }

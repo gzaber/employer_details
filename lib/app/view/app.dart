@@ -25,9 +25,9 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: settingsRepository),
       ],
       child: BlocProvider(
-        create: (context) => SettingsCubit(
-          settingsRepository: settingsRepository,
-        )..readSettings(),
+        create: (context) =>
+            SettingsCubit(settingsRepository: settingsRepository)
+              ..readSettings(),
         child: const AppView(),
       ),
     );
@@ -51,9 +51,9 @@ class AppView extends StatelessWidget {
       ),
       home: BlocListener<SettingsCubit, SettingsState>(
         listenWhen: (previous, current) =>
-            previous.hasException != current.hasException,
+            previous.hasFailure != current.hasFailure,
         listener: (context, state) {
-          if (state.hasException) {
+          if (state.hasFailure) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(

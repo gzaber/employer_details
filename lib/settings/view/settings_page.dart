@@ -27,6 +27,7 @@ class SettingsPage extends StatelessWidget {
             title: const Text('Theme'),
             leading: const Icon(Icons.contrast),
             trailing: ElevatedButton(
+              key: const Key('settingsPageToggleThemeButtonKey'),
               onPressed: () {
                 context.read<SettingsCubit>().toggleTheme();
               },
@@ -40,6 +41,7 @@ class SettingsPage extends StatelessWidget {
             title: const Text('Color scheme'),
             leading: const Icon(Icons.color_lens),
             trailing: ElevatedButton(
+              key: const Key('settingsPageSelectColorButtonKey'),
               onPressed: () async {
                 SelectColorDialog.show(
                   context,
