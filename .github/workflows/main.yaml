@@ -49,7 +49,7 @@ jobs:
         run: flutter pub get
 
       - name: Build an APK
-        run: flutter build apk
+        run: flutter build apk --release --no-tree-shake-icons
 
   build_ios:
     if: github.event_name == 'pull_request'
@@ -66,4 +66,4 @@ jobs:
         run: flutter pub get
 
       - name: Build for iOS
-        run: flutter build ios --release --no-codesign
+        run: flutter build ipa --release --no-tree-shake-icons
