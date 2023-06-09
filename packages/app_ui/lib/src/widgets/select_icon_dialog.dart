@@ -51,7 +51,7 @@ class SelectIconDialog extends StatelessWidget {
                 Navigator.pop(context, icons[index]);
               },
               child: CircleAvatar(
-                key: Key('selectIconDialogIconAvatarKey$index'),
+                key: Key('selectIconDialogIconKey$index'),
                 child: Icon(icons[index]),
               ),
             );

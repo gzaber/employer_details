@@ -11,15 +11,26 @@ class EditModePage extends StatelessWidget {
 
   static Route route() {
     return MaterialPageRoute(
-      builder: (_) => BlocProvider(
-        create: (context) => EditModeCubit(
-          detailsRepository: context.read<DetailsRepository>(),
-        )..getDetails(),
-        child: const EditModePage(),
-      ),
+      builder: (_) => const EditModePage(),
       settings: const RouteSettings(name: '/edit_mode'),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => EditModeCubit(
+        detailsRepository: context.read<DetailsRepository>(),
+      )..getDetails(),
+      child: const EditModeView(),
+    );
+  }
+}
+
+class EditModeView extends StatelessWidget {
+  const EditModeView({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +39,7 @@ class EditModePage extends StatelessWidget {
         title: const Text('Edit mode'),
         actions: [
           IconButton(
+            key: const Key('editModePageCreateDetailButtonKey'),
             icon: const Icon(Icons.add_circle_outline),
             onPressed: () => Navigator.push<bool>(
               context,
@@ -161,14 +173,16 @@ class _DetailItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             MenuButton(
+              key: Key('editModePageEditMenuButtonKey${detail.id}'),
               menuItems: [
                 MenuItem(
+                  key: Key('editModePageEditMenuItemKey${detail.id}'),
                   icon: Icons.edit,
                   text: 'Edit',
                   onTap: () {
                     Navigator.push(
                       context,
-                      ManageDetailPage.route(detail: detail),
+                      ManageDetailPage.route(id: detail.id),
                     ).then(
                       (value) {
                         if (value == true) {
@@ -179,6 +193,7 @@ class _DetailItem extends StatelessWidget {
                   },
                 ),
                 MenuItem(
+                    key: Key('editModePageDeleteMenuItemKey${detail.id}'),
                     icon: Icons.delete,
                     text: 'Delete',
                     onTap: () {
@@ -212,10 +227,12 @@ Future<bool?> _showDeleteDialog(BuildContext context) async {
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: [
             TextButton(
+              key: const Key('editModePageDeleteDialogCancelButtonKey'),
               child: const Text('Cancel'),
               onPressed: () => Navigator.pop(context, false),
             ),
             TextButton(
+              key: const Key('editModePageDeleteDialogApproveButtonKey'),
               child: const Text('Approve'),
               onPressed: () => Navigator.pop(context, true),
             ),

@@ -1,6 +1,6 @@
 part of 'manage_detail_cubit.dart';
 
-enum ManageDetailStatus { initial, loading, success, failure }
+enum ManageDetailStatus { initial, loading, success, failure, saveSuccess }
 
 class ManageDetailState extends Equatable {
   ManageDetailState({
@@ -18,7 +18,7 @@ class ManageDetailState extends Equatable {
   final Detail detail;
 
   @override
-  List<Object> get props => [status, detail];
+  List<Object?> get props => [status, detail];
 
   ManageDetailState copyWith({
     ManageDetailStatus? status,

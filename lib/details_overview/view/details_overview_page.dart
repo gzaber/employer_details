@@ -16,13 +16,13 @@ class DetailsOverviewPage extends StatelessWidget {
       create: (context) => DetailsOverviewCubit(
         detailsRepository: context.read<DetailsRepository>(),
       )..getDetails(),
-      child: const NotesOverviewView(),
+      child: const DetailsOverviewView(),
     );
   }
 }
 
-class NotesOverviewView extends StatelessWidget {
-  const NotesOverviewView({super.key});
+class DetailsOverviewView extends StatelessWidget {
+  const DetailsOverviewView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +33,7 @@ class NotesOverviewView extends StatelessWidget {
           MenuButton(
             menuItems: [
               MenuItem(
+                key: const Key('detailsOverviewPageEditModeMenuItemKey'),
                 icon: Icons.edit,
                 text: 'Edit mode',
                 onTap: () {
@@ -45,6 +46,7 @@ class NotesOverviewView extends StatelessWidget {
                 },
               ),
               MenuItem(
+                key: const Key('detailsOverviewPageSettingsMenuItemKey'),
                 icon: Icons.settings,
                 text: 'Settings',
                 onTap: () => Navigator.push(context, SettingsPage.route()),
@@ -54,6 +56,7 @@ class NotesOverviewView extends StatelessWidget {
         ],
       ),
       body: BlocConsumer<DetailsOverviewCubit, DetailsOverviewState>(
+        listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {
           if (state.status == DetailsOverviewStatus.failure) {
             ScaffoldMessenger.of(context)

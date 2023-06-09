@@ -4,25 +4,25 @@ class SettingsState extends Equatable {
   const SettingsState({
     this.isDarkTheme = false,
     this.colorSchemeCode = 4284955319,
-    this.hasException = false,
+    this.hasFailure = false,
   });
 
   final bool isDarkTheme;
   final int colorSchemeCode;
-  final bool hasException;
+  final bool hasFailure;
 
   SettingsState copyWith({
     bool? isDarkTheme,
     int? colorSchemeCode,
-    bool? hasException,
+    bool? hasFailure,
   }) {
     return SettingsState(
       isDarkTheme: isDarkTheme ?? this.isDarkTheme,
       colorSchemeCode: colorSchemeCode ?? this.colorSchemeCode,
-      hasException: hasException ?? this.hasException,
+      hasFailure: hasFailure ?? this.hasFailure,
     );
   }
 
   @override
-  List<Object?> get props => [isDarkTheme, colorSchemeCode];
+  List<Object> get props => [isDarkTheme, colorSchemeCode, hasFailure];
 }

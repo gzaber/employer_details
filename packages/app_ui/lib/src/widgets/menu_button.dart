@@ -4,16 +4,13 @@ class MenuButton extends StatelessWidget {
   const MenuButton({
     super.key,
     required this.menuItems,
-    this.icon = Icons.more_vert,
   });
 
   final List<MenuItem> menuItems;
-  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
-      icon: Icon(icon),
       onSelected: (value) => menuItems[value].onTap(),
       itemBuilder: (_) => <PopupMenuEntry<int>>[
         ...List.generate(
