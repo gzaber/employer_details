@@ -79,6 +79,11 @@ jobs:
     needs: [build_android]
     runs-on: ubuntu-latest
     steps:
+    - name: Generate version variables
+        run: |
+        echo "VERSION_2ND_PLACE=$((GITHUB_RUN_NUMBER/10))" >> $GITHUB_ENV
+        echo "VERSION_3RD_PLACE=$((GITHUB_RUN_NUMBER%10))" >> $GITHUB_ENV
+
       - name: Download all artifacts
         uses: actions/download-artifact@v3
 
@@ -87,5 +92,5 @@ jobs:
         with:
           allowUpdates: true
           artifacts: "android_release/*.apk"
-          tag: v1.0.${{ github.run_number }}
+          tag: v1.${{ VERSION_2ND_PLACE }}.${{ VERSION_3RD_PLACE }}
           token: ${{ secrets.RELEASE_TOKEN }}
