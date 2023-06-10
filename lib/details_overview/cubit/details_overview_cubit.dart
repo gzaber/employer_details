@@ -16,6 +16,7 @@ class DetailsOverviewCubit extends Cubit<DetailsOverviewState> {
     emit(state.copyWith(status: DetailsOverviewStatus.loading));
     try {
       final details = await _detailsRepository.readAllDetails();
+      details.sort((a, b) => a.position.compareTo(b.position));
       emit(
         state.copyWith(
           status: DetailsOverviewStatus.success,

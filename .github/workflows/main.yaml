@@ -49,7 +49,13 @@ jobs:
         run: flutter pub get
 
       - name: Build an APK
-        run: flutter build apk --release --no-tree-shake-icons
+        run: flutter build apk --release --split-per-abi  --no-tree-shake-icons
+
+      - name: Upload Android release artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: android_release
+          path: "build/app/outputs/apk/release"
 
   build_ios:
     if: github.event_name == 'pull_request'
@@ -67,3 +73,24 @@ jobs:
 
       - name: Build for iOS
         run: flutter build ios --release --no-codesign --no-tree-shake-icons
+
+  release_android:
+    if: github.event_name == 'pull_request'
+    needs: [build_android]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate version variables
+        run: |
+          echo "VERSION_2ND_PLACE=$((GITHUB_RUN_NUMBER/10))" >> $GITHUB_ENV
+          echo "VERSION_3RD_PLACE=$((GITHUB_RUN_NUMBER%10))" >> $GITHUB_ENV
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Create a Release APK
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "android_release/*.apk"
+          tag: v1.${{ env.VERSION_2ND_PLACE }}.${{ env.VERSION_3RD_PLACE }}
+          token: ${{ secrets.RELEASE_TOKEN }}
