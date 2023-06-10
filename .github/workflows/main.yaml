@@ -75,11 +75,11 @@ jobs:
         run: flutter build ios --release --no-codesign --no-tree-shake-icons
 
   release_android:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push'
     needs: [build_android]
     runs-on: ubuntu-latest
     steps:
-    - name: Generate version variables
+      - name: Generate version variables
         run: |
           echo "VERSION_2ND_PLACE=$((GITHUB_RUN_NUMBER/10))" >> $GITHUB_ENV
           echo "VERSION_3RD_PLACE=$((GITHUB_RUN_NUMBER%10))" >> $GITHUB_ENV
@@ -90,7 +90,6 @@ jobs:
       - name: Create a Release APK
         uses: ncipollo/release-action@v1
         with:
-          allowUpdates: true
           artifacts: "android_release/*.apk"
-          tag: v1.${{ VERSION_2ND_PLACE }}.${{ VERSION_3RD_PLACE }}
+          tag: v1.${{ env.VERSION_2ND_PLACE }}.${{ env.VERSION_3RD_PLACE }}
           token: ${{ secrets.RELEASE_TOKEN }}
