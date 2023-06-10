@@ -6,27 +6,31 @@ import 'package:mockingjay/mockingjay.dart';
 
 class MockDetailsRepository extends Mock implements DetailsRepository {}
 
+class FakeDetail extends Fake implements Detail {}
+
 void main() {
   group('EditModeCubit', () {
     late DetailsRepository detailsRepository;
 
-    final details = [
-      Detail(
-          id: 1,
-          title: 'title1',
-          description: 'description1',
-          iconData: 11111,
-          position: 1),
-      Detail(
-          id: 2,
-          title: 'title2',
-          description: 'description2',
-          iconData: 22222,
-          position: 2),
-    ];
+    final detail1 = Detail(
+        id: 1,
+        title: 'title1',
+        description: 'description1',
+        iconData: 11111,
+        position: 0);
+    final detail2 = Detail(
+        id: 2,
+        title: 'title2',
+        description: 'description2',
+        iconData: 22222,
+        position: 1);
 
     EditModeCubit createCubit() =>
         EditModeCubit(detailsRepository: detailsRepository);
+
+    setUpAll(() {
+      registerFallbackValue(FakeDetail());
+    });
 
     setUp(() {
       detailsRepository = MockDetailsRepository();
@@ -48,13 +52,16 @@ void main() {
           'emits state with success status and list of details',
           setUp: () {
             when(() => detailsRepository.readAllDetails())
-                .thenAnswer((_) async => details);
+                .thenAnswer((_) async => [detail1, detail2]);
           },
           build: () => createCubit(),
           act: (cubit) => cubit.getDetails(),
           expect: () => [
                 const EditModeState(),
-                EditModeState(status: EditModeStatus.success, details: details),
+                EditModeState(
+                  status: EditModeStatus.success,
+                  details: [detail1, detail2],
+                ),
               ],
           verify: (_) {
             verify(() => detailsRepository.readAllDetails()).called(1);
@@ -78,19 +85,31 @@ void main() {
 
     group('deleteDetail', () {
       blocTest<EditModeCubit, EditModeState>(
-          'emits state with success status when deleted successfully',
+          'emits state with success status and updated list of details when deleted successfully',
           setUp: () {
             when(() => detailsRepository.deleteDetail(1))
                 .thenAnswer((_) async {});
+            when(() => detailsRepository.updateDetail(any()))
+                .thenAnswer((_) async {});
           },
           build: () => createCubit(),
-          act: (cubit) => cubit.deleteDetail(id: 1),
-          expect: () => const [
-                EditModeState(),
-                EditModeState(status: EditModeStatus.success),
+          seed: () => EditModeState(
+                status: EditModeStatus.success,
+                details: [detail1, detail2],
+              ),
+          act: (cubit) => cubit.deleteDetail(id: detail1.id!),
+          expect: () => [
+                EditModeState(
+                    status: EditModeStatus.loading,
+                    details: [detail2.copyWith(position: 0)]),
+                EditModeState(
+                    status: EditModeStatus.success,
+                    details: [detail2.copyWith(position: 0)]),
               ],
           verify: (_) {
             verify(() => detailsRepository.deleteDetail(1)).called(1);
+            verify(() => detailsRepository
+                .updateDetail(detail2.copyWith(position: 0))).called(1);
           });
 
       blocTest<EditModeCubit, EditModeState>(
@@ -100,14 +119,109 @@ void main() {
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
+          seed: () => EditModeState(
+                status: EditModeStatus.success,
+                details: [detail1, detail2],
+              ),
           act: (cubit) => cubit.deleteDetail(id: 1),
-          expect: () => const [
-                EditModeState(),
-                EditModeState(status: EditModeStatus.failure),
+          expect: () => [
+                EditModeState(
+                    status: EditModeStatus.loading,
+                    details: [detail1, detail2]),
+                EditModeState(
+                    status: EditModeStatus.failure,
+                    details: [detail1, detail2]),
               ],
           verify: (_) {
             verify(() => detailsRepository.deleteDetail(1)).called(1);
           });
+    });
+
+    group('updateDetailPosition', () {
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with success status and updated list when old index is greater than new index',
+        setUp: () {
+          when(() => detailsRepository.updateDetail(any()))
+              .thenAnswer((_) async {});
+        },
+        build: () => createCubit(),
+        seed: () => EditModeState(
+          status: EditModeStatus.success,
+          details: [detail1, detail2],
+        ),
+        act: (cubit) => cubit.updateDetailPosition(oldIndex: 1, newIndex: 0),
+        expect: () => [
+          EditModeState(status: EditModeStatus.loading, details: [
+            detail2.copyWith(position: 0),
+            detail1.copyWith(position: 1),
+          ]),
+          EditModeState(status: EditModeStatus.success, details: [
+            detail2.copyWith(position: 0),
+            detail1.copyWith(position: 1),
+          ]),
+        ],
+        verify: (_) {
+          verify(() =>
+                  detailsRepository.updateDetail(detail1.copyWith(position: 1)))
+              .called(1);
+          verify(() =>
+                  detailsRepository.updateDetail(detail2.copyWith(position: 0)))
+              .called(1);
+        },
+      );
+
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with success status and updated list when old index is less than new index',
+        setUp: () {
+          when(() => detailsRepository.updateDetail(any()))
+              .thenAnswer((_) async {});
+        },
+        build: () => createCubit(),
+        seed: () => EditModeState(
+          status: EditModeStatus.success,
+          details: [detail1, detail2],
+        ),
+        act: (cubit) => cubit.updateDetailPosition(oldIndex: 0, newIndex: 1),
+        expect: () => [
+          EditModeState(
+              status: EditModeStatus.loading, details: [detail1, detail2]),
+          EditModeState(
+              status: EditModeStatus.success, details: [detail1, detail2]),
+        ],
+        verify: (_) {
+          verify(() => detailsRepository.updateDetail(detail1)).called(1);
+          verify(() => detailsRepository.updateDetail(detail2)).called(1);
+        },
+      );
+
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with failure status when failure occured',
+        setUp: () {
+          when(() => detailsRepository.updateDetail(any()))
+              .thenThrow(Exception());
+        },
+        build: () => createCubit(),
+        seed: () => EditModeState(
+          status: EditModeStatus.success,
+          details: [detail1, detail2],
+        ),
+        act: (cubit) => cubit.updateDetailPosition(oldIndex: 1, newIndex: 0),
+        expect: () => [
+          EditModeState(status: EditModeStatus.loading, details: [
+            detail2.copyWith(position: 0),
+            detail1.copyWith(position: 0),
+          ]),
+          EditModeState(status: EditModeStatus.failure, details: [
+            detail2.copyWith(position: 0),
+            detail1.copyWith(position: 0),
+          ]),
+        ],
+        verify: (_) {
+          verify(() =>
+                  detailsRepository.updateDetail(detail2.copyWith(position: 0)))
+              .called(1);
+        },
+      );
     });
   });
 }

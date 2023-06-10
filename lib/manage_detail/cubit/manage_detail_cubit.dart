@@ -53,7 +53,19 @@ class ManageDetailCubit extends Cubit<ManageDetailState> {
     }
   }
 
-  void saveDetail() async {
+  void createDetail() async {
+    emit(state.copyWith(status: ManageDetailStatus.loading));
+    try {
+      final details = await _detailsRepository.readAllDetails();
+      final detail = state.detail.copyWith(position: details.length);
+      await _detailsRepository.createDetail(detail);
+      emit(state.copyWith(status: ManageDetailStatus.saveSuccess));
+    } catch (_) {
+      emit(state.copyWith(status: ManageDetailStatus.failure));
+    }
+  }
+
+  void updateDetail() async {
     emit(state.copyWith(status: ManageDetailStatus.loading));
     try {
       await _detailsRepository.updateDetail(state.detail);

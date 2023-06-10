@@ -6,6 +6,8 @@ import 'package:mockingjay/mockingjay.dart';
 
 class MockDetailsRepository extends Mock implements DetailsRepository {}
 
+class FakeDetail extends Fake implements Detail {}
+
 void main() {
   group('ManageDetailCubit', () {
     late DetailsRepository detailsRepository;
@@ -15,10 +17,14 @@ void main() {
         title: 'title1',
         description: 'description1',
         iconData: 11111,
-        position: 1);
+        position: 0);
 
     ManageDetailCubit createCubit() =>
         ManageDetailCubit(detailsRepository: detailsRepository);
+
+    setUpAll(() {
+      registerFallbackValue(FakeDetail());
+    });
 
     setUp(() {
       detailsRepository = MockDetailsRepository();
@@ -132,16 +138,69 @@ void main() {
           });
     });
 
-    group('saveDetail', () {
+    group('createDetail', () {
+      final newDetail = Detail(
+          id: 2,
+          title: 'title2',
+          description: 'description2',
+          iconData: 22222,
+          position: 0);
+
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with success status when saved successfully',
+          'emits state with success status when detail created successfully',
           setUp: () {
-            when(() => detailsRepository.updateDetail(detail))
+            when(() => detailsRepository.readAllDetails())
+                .thenAnswer((_) async => [detail]);
+            when(() => detailsRepository.createDetail(any()))
+                .thenAnswer((_) async {});
+          },
+          build: () => createCubit(),
+          seed: () => ManageDetailState(detail: newDetail),
+          act: (cubit) => cubit.createDetail(),
+          expect: () => [
+                ManageDetailState(
+                    status: ManageDetailStatus.loading, detail: newDetail),
+                ManageDetailState(
+                    status: ManageDetailStatus.saveSuccess, detail: newDetail),
+              ],
+          verify: (_) {
+            verify(() => detailsRepository
+                .createDetail(newDetail.copyWith(position: 1))).called(1);
+          });
+
+      blocTest<ManageDetailCubit, ManageDetailState>(
+          'emits state with failure status when failure occured',
+          setUp: () {
+            when(() => detailsRepository.readAllDetails())
+                .thenAnswer((_) async => [detail]);
+            when(() => detailsRepository.createDetail(any()))
+                .thenThrow(Exception());
+          },
+          build: () => createCubit(),
+          seed: () => ManageDetailState(detail: newDetail),
+          act: (cubit) => cubit.createDetail(),
+          expect: () => [
+                ManageDetailState(
+                    status: ManageDetailStatus.loading, detail: newDetail),
+                ManageDetailState(
+                    status: ManageDetailStatus.failure, detail: newDetail),
+              ],
+          verify: (_) {
+            verify(() => detailsRepository
+                .createDetail(newDetail.copyWith(position: 1))).called(1);
+          });
+    });
+
+    group('updateDetail', () {
+      blocTest<ManageDetailCubit, ManageDetailState>(
+          'emits state with success status when detail updated successfully',
+          setUp: () {
+            when(() => detailsRepository.updateDetail(any()))
                 .thenAnswer((_) async {});
           },
           build: () => createCubit(),
           seed: () => ManageDetailState(detail: detail),
-          act: (cubit) => cubit.saveDetail(),
+          act: (cubit) => cubit.updateDetail(),
           expect: () => [
                 ManageDetailState(
                     status: ManageDetailStatus.loading, detail: detail),
@@ -155,12 +214,12 @@ void main() {
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.updateDetail(detail))
+            when(() => detailsRepository.updateDetail(any()))
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
           seed: () => ManageDetailState(detail: detail),
-          act: (cubit) => cubit.saveDetail(),
+          act: (cubit) => cubit.updateDetail(),
           expect: () => [
                 ManageDetailState(
                     status: ManageDetailStatus.loading, detail: detail),
