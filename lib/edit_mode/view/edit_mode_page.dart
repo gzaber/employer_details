@@ -103,7 +103,7 @@ class EditModeView extends StatelessWidget {
   }
 }
 
-class _DetailsReorderableList extends StatefulWidget {
+class _DetailsReorderableList extends StatelessWidget {
   const _DetailsReorderableList({
     Key? key,
     required this.details,
@@ -112,31 +112,21 @@ class _DetailsReorderableList extends StatefulWidget {
   final List<Detail> details;
 
   @override
-  State<_DetailsReorderableList> createState() =>
-      _DetailsReorderableListState();
-}
-
-class _DetailsReorderableListState extends State<_DetailsReorderableList> {
-  @override
   Widget build(BuildContext context) {
     return ReorderableListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      itemCount: widget.details.length,
+      itemCount: details.length,
       itemBuilder: (_, index) {
-        final detail = widget.details[index];
+        final detail = details[index];
         return _DetailItem(
-          key: Key('$index'),
+          key: Key('editModePageDetailItemKey$index'),
           detail: detail,
         );
       },
       onReorder: (oldIndex, newIndex) {
-        setState(() {
-          if (oldIndex < newIndex) {
-            newIndex -= 1;
-          }
-          final detail = widget.details.removeAt(oldIndex);
-          widget.details.insert(newIndex, detail);
-        });
+        context.read<EditModeCubit>().updateDetailPosition(
+              oldIndex: oldIndex,
+              newIndex: newIndex,
+            );
       },
     );
   }
@@ -152,64 +142,68 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          child: Icon(
-            IconData(detail.iconData, fontFamily: 'MaterialIcons'),
-          ),
-        ),
-        title: Text(
-          detail.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          detail.description,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            MenuButton(
-              key: Key('editModePageEditMenuButtonKey${detail.id}'),
-              menuItems: [
-                MenuItem(
-                  key: Key('editModePageEditMenuItemKey${detail.id}'),
-                  icon: Icons.edit,
-                  text: 'Edit',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      ManageDetailPage.route(id: detail.id),
-                    ).then(
-                      (value) {
-                        if (value == true) {
-                          context.read<EditModeCubit>().getDetails();
-                        }
-                      },
-                    );
-                  },
-                ),
-                MenuItem(
-                    key: Key('editModePageDeleteMenuItemKey${detail.id}'),
-                    icon: Icons.delete,
-                    text: 'Delete',
-                    onTap: () {
-                      _showDeleteDialog(context).then((value) {
-                        if (value == true) {
-                          context
-                              .read<EditModeCubit>()
-                              .deleteDetail(id: detail.id!);
-                          context.read<EditModeCubit>().getDetails();
-                        }
-                      });
-                    }),
-              ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Card(
+        child: ListTile(
+          leading: CircleAvatar(
+            child: Icon(
+              IconData(detail.iconData, fontFamily: 'MaterialIcons'),
             ),
-            const Icon(Icons.drag_handle),
-          ],
+          ),
+          title: Text(
+            detail.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(
+            detail.description,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MenuButton(
+                key: Key('editModePageEditMenuButtonKey${detail.id}'),
+                menuItems: [
+                  MenuItem(
+                    key: Key('editModePageEditMenuItemKey${detail.id}'),
+                    icon: Icons.edit,
+                    text: 'Edit',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        ManageDetailPage.route(id: detail.id),
+                      ).then(
+                        (value) {
+                          if (value == true) {
+                            context.read<EditModeCubit>().getDetails();
+                          }
+                        },
+                      );
+                    },
+                  ),
+                  MenuItem(
+                      key: Key('editModePageDeleteMenuItemKey${detail.id}'),
+                      icon: Icons.delete,
+                      text: 'Delete',
+                      onTap: () {
+                        _showDeleteDialog(context).then((value) {
+                          if (value == true) {
+                            if (detail.id != null) {
+                              context
+                                  .read<EditModeCubit>()
+                                  .deleteDetail(id: detail.id!);
+                            }
+                          }
+                        });
+                      }),
+                ],
+              ),
+              const Icon(Icons.drag_handle),
+            ],
+          ),
         ),
       ),
     );

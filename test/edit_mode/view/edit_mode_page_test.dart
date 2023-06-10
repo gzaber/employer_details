@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:employer_details/edit_mode/edit_mode.dart';
 import 'package:employer_details/manage_detail/manage_detail.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -218,9 +219,45 @@ void main() {
     });
 
     testWidgets(
-        'reads details when pops from ManageDetailPage after updating with true',
+        'reads details when pops with true from ManageDetailPage after creating detail',
         (tester) async {
       final detailsRepository = MockDetailsRepository();
+      when(() => detailsRepository.readAllDetails())
+          .thenAnswer((_) async => []);
+      when(() => detailsRepository.createDetail(any()))
+          .thenAnswer((_) async => {});
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(
+          status: EditModeStatus.success,
+          details: details,
+        ),
+      );
+
+      await tester.pumpView(
+        editModeCubit: editModeCubit,
+        detailsRepository: detailsRepository,
+      );
+
+      await tester
+          .tap(find.byKey(const Key('editModePageCreateDetailButtonKey')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ManageDetailPage), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.save));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditModeView), findsOneWidget);
+
+      verify(() => editModeCubit.getDetails()).called(1);
+    });
+
+    testWidgets(
+        'reads details when pops with true from ManageDetailPage after updating detail',
+        (tester) async {
+      final detailsRepository = MockDetailsRepository();
+      when(() => detailsRepository.readDetail(any()))
+          .thenAnswer((_) async => details.first);
       when(() => detailsRepository.updateDetail(any()))
           .thenAnswer((_) async => {});
       when(() => editModeCubit.state).thenReturn(
@@ -239,38 +276,6 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(const Key('editModePageEditMenuItemKey1')));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(ManageDetailPage), findsOneWidget);
-
-      await tester.tap(find.byIcon(Icons.save));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(EditModeView), findsOneWidget);
-
-      verify(() => editModeCubit.getDetails()).called(1);
-    });
-
-    testWidgets(
-        'reads details when pops from ManageDetailPage after creating with true',
-        (tester) async {
-      final detailsRepository = MockDetailsRepository();
-      when(() => detailsRepository.updateDetail(any()))
-          .thenAnswer((_) async => {});
-      when(() => editModeCubit.state).thenReturn(
-        EditModeState(
-          status: EditModeStatus.success,
-          details: details,
-        ),
-      );
-
-      await tester.pumpView(
-        editModeCubit: editModeCubit,
-        detailsRepository: detailsRepository,
-      );
-
-      await tester
-          .tap(find.byKey(const Key('editModePageCreateDetailButtonKey')));
       await tester.pumpAndSettle();
 
       expect(find.byType(ManageDetailPage), findsOneWidget);
@@ -327,7 +332,6 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(() => editModeCubit.deleteDetail(id: details.first.id!)).called(1);
-      verify(() => editModeCubit.getDetails()).called(1);
     });
 
     testWidgets(
@@ -356,6 +360,30 @@ void main() {
 
       verifyNever(() => editModeCubit.deleteDetail(id: details.first.id!));
       verifyNever(() => editModeCubit.getDetails());
+    });
+
+    testWidgets(
+        'reorders details when detail item is dragged to a new position',
+        (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(
+          status: EditModeStatus.success,
+          details: details,
+        ),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      final TestGesture drag = await tester.startGesture(tester
+          .getCenter(find.byKey(const Key('editModePageDetailItemKey0'))));
+      await tester.pump(kLongPressTimeout + kPressTimeout);
+      await drag.moveTo(tester
+          .getCenter(find.byKey(const Key('editModePageDetailItemKey1'))));
+      await drag.up();
+      await tester.pumpAndSettle();
+
+      verify(() => editModeCubit.updateDetailPosition(oldIndex: 0, newIndex: 1))
+          .called(1);
     });
   });
 }
