@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'detail.g.dart';
+
+@JsonSerializable()
 class Detail extends Equatable {
   Detail({
     this.id,
@@ -14,6 +18,10 @@ class Detail extends Equatable {
   final String description;
   final int iconData;
   final int position;
+
+  factory Detail.fromJson(Map<String, dynamic> json) => _$DetailFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DetailToJson(this);
 
   Detail copyWith({
     int? id,

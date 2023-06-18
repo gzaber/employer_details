@@ -5,8 +5,12 @@ class DetailsRepository {
 
   final DetailsApi _detailsApi;
 
-  Future<void> createDetail(Detail detail) async {
-    await _detailsApi.createDetail(detail);
+  Future<void> saveDetail(Detail detail) async {
+    await _detailsApi.saveDetail(detail);
+  }
+
+  Future<void> saveAllDetails(List<Detail> details) async {
+    await _detailsApi.saveAllDetails(details);
   }
 
   Future<void> updateDetail(Detail detail) async {
@@ -23,5 +27,9 @@ class DetailsRepository {
 
   Future<List<Detail>> readAllDetails() async {
     return await _detailsApi.readAllDetails();
+  }
+
+  Future<void> clearDetails() async {
+    await _detailsApi.clearDetails();
   }
 }

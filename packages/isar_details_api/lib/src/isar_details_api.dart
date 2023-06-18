@@ -9,20 +9,30 @@ class IsarDetailsApi implements DetailsApi {
   final Isar _isar;
 
   @override
-  Future<void> createDetail(Detail detail) async {
+  Future<void> saveDetail(Detail detail) async {
     await _isar.writeTxn(() async {
       await _isar.detailModels.put(DetailModel.fromDetail(detail));
     });
   }
 
   @override
+  Future<void> saveAllDetails(List<Detail> details) async {
+    final detailModels =
+        details.map((detail) => DetailModel.fromDetail(detail)).toList();
+
+    await _isar.writeTxn(() async {
+      await _isar.detailModels.putAll(detailModels);
+    });
+  }
+
+  @override
   Future<void> updateDetail(Detail detail) async {
-    await createDetail(detail);
+    await saveDetail(detail);
   }
 
   @override
   Future<void> deleteDetail(int id) async {
-    return await _isar.writeTxn<void>(() async {
+    await _isar.writeTxn<void>(() async {
       await _isar.detailModels.delete(id);
     });
   }
@@ -42,5 +52,12 @@ class IsarDetailsApi implements DetailsApi {
     final detailModels = await _isar.detailModels.where().findAll();
 
     return detailModels.map((m) => m.toDetail()).toList();
+  }
+
+  @override
+  Future<void> clearDetails() async {
+    await _isar.writeTxn<void>(() async {
+      await _isar.detailModels.clear();
+    });
   }
 }

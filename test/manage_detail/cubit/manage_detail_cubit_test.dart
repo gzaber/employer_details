@@ -138,7 +138,7 @@ void main() {
           });
     });
 
-    group('createDetail', () {
+    group('saveDetail', () {
       final newDetail = Detail(
           id: 2,
           title: 'title2',
@@ -147,16 +147,16 @@ void main() {
           position: 0);
 
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with success status when detail created successfully',
+          'emits state with success status when detail saved successfully',
           setUp: () {
             when(() => detailsRepository.readAllDetails())
                 .thenAnswer((_) async => [detail]);
-            when(() => detailsRepository.createDetail(any()))
+            when(() => detailsRepository.saveDetail(any()))
                 .thenAnswer((_) async {});
           },
           build: () => createCubit(),
           seed: () => ManageDetailState(detail: newDetail),
-          act: (cubit) => cubit.createDetail(),
+          act: (cubit) => cubit.saveDetail(),
           expect: () => [
                 ManageDetailState(
                     status: ManageDetailStatus.loading, detail: newDetail),
@@ -165,7 +165,7 @@ void main() {
               ],
           verify: (_) {
             verify(() => detailsRepository
-                .createDetail(newDetail.copyWith(position: 1))).called(1);
+                .saveDetail(newDetail.copyWith(position: 1))).called(1);
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
@@ -173,12 +173,12 @@ void main() {
           setUp: () {
             when(() => detailsRepository.readAllDetails())
                 .thenAnswer((_) async => [detail]);
-            when(() => detailsRepository.createDetail(any()))
+            when(() => detailsRepository.saveDetail(any()))
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
           seed: () => ManageDetailState(detail: newDetail),
-          act: (cubit) => cubit.createDetail(),
+          act: (cubit) => cubit.saveDetail(),
           expect: () => [
                 ManageDetailState(
                     status: ManageDetailStatus.loading, detail: newDetail),
@@ -187,7 +187,7 @@ void main() {
               ],
           verify: (_) {
             verify(() => detailsRepository
-                .createDetail(newDetail.copyWith(position: 1))).called(1);
+                .saveDetail(newDetail.copyWith(position: 1))).called(1);
           });
     });
 

@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:employer_details/edit_mode/edit_mode.dart';
+import 'package:file/file.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
 
@@ -8,9 +9,15 @@ class MockDetailsRepository extends Mock implements DetailsRepository {}
 
 class FakeDetail extends Fake implements Detail {}
 
+class MockFileSystem extends Mock implements FileSystem {}
+
+class MockFile extends Mock implements File {}
+
 void main() {
   group('EditModeCubit', () {
     late DetailsRepository detailsRepository;
+    late FileSystem mockFileSystem;
+    late File mockFile;
 
     final detail1 = Detail(
         id: 1,
@@ -25,8 +32,10 @@ void main() {
         iconData: 22222,
         position: 1);
 
-    EditModeCubit createCubit() =>
-        EditModeCubit(detailsRepository: detailsRepository);
+    EditModeCubit createCubit() => EditModeCubit(
+          detailsRepository: detailsRepository,
+          fileSystem: mockFileSystem,
+        );
 
     setUpAll(() {
       registerFallbackValue(FakeDetail());
@@ -34,6 +43,13 @@ void main() {
 
     setUp(() {
       detailsRepository = MockDetailsRepository();
+      mockFileSystem = MockFileSystem();
+      mockFile = MockFile();
+
+      when(() => mockFileSystem.file(any())).thenReturn(mockFile);
+      when(() => detailsRepository.clearDetails()).thenAnswer((_) async {});
+      when(() => detailsRepository.saveAllDetails(any()))
+          .thenAnswer((_) async {});
     });
 
     test('constructor works properly', () {
@@ -221,6 +237,86 @@ void main() {
                   detailsRepository.updateDetail(detail2.copyWith(position: 0)))
               .called(1);
         },
+      );
+    });
+
+    group('exportDetails', () {
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with success status when file saved successfully',
+        setUp: () {
+          when(() => mockFile.writeAsString(any()))
+              .thenAnswer((_) async => mockFile);
+        },
+        build: () => createCubit(),
+        act: (cubit) => cubit.exportDetails(path: 'path', fileName: 'fileName'),
+        seed: () => EditModeState(
+          status: EditModeStatus.success,
+          details: [detail1, detail2],
+        ),
+        expect: () => [
+          EditModeState(
+              status: EditModeStatus.loading, details: [detail1, detail2]),
+          EditModeState(
+              status: EditModeStatus.success, details: [detail1, detail2]),
+        ],
+      );
+
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with failure status when failure occured',
+        setUp: () {
+          when(() => mockFile.writeAsString(any())).thenThrow(Exception());
+        },
+        build: () => createCubit(),
+        act: (cubit) => cubit.exportDetails(path: 'path', fileName: 'fileName'),
+        seed: () => EditModeState(
+          status: EditModeStatus.success,
+          details: [detail1, detail2],
+        ),
+        expect: () => [
+          EditModeState(
+              status: EditModeStatus.loading, details: [detail1, detail2]),
+          EditModeState(
+              status: EditModeStatus.failure, details: [detail1, detail2]),
+        ],
+      );
+    });
+
+    group('importDetails', () {
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with success status and details when read file successfully',
+        setUp: () {
+          when(() => mockFile.readAsString()).thenAnswer((_) async =>
+              '[{"id":1,"title":"title1","description":"description1","iconData":11111,"position":0}]');
+        },
+        build: () => createCubit(),
+        act: (cubit) => cubit.importDetails(path: 'path/fileName'),
+        seed: () => const EditModeState(
+          status: EditModeStatus.success,
+          details: [],
+        ),
+        expect: () => [
+          const EditModeState(status: EditModeStatus.loading, details: []),
+          EditModeState(status: EditModeStatus.success, details: [detail1]),
+        ],
+        verify: (_) {
+          verify(() => detailsRepository.clearDetails()).called(1);
+          verify(() => detailsRepository.saveAllDetails([detail1])).called(1);
+        },
+      );
+
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with failure status when failure occured',
+        setUp: () {
+          when(() => mockFile.readAsString()).thenThrow(Exception());
+        },
+        build: () => createCubit(),
+        act: (cubit) => cubit.importDetails(path: 'path/fileName'),
+        seed: () =>
+            const EditModeState(status: EditModeStatus.success, details: []),
+        expect: () => const [
+          EditModeState(status: EditModeStatus.loading),
+          EditModeState(status: EditModeStatus.failure),
+        ],
       );
     });
   });

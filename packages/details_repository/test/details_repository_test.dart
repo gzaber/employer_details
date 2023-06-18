@@ -42,12 +42,21 @@ void main() {
       });
     });
 
-    group('createDetail', () {
-      test('creates Detail', () {
-        when(() => detailsApi.createDetail(any())).thenAnswer((_) async {});
+    group('saveDetail', () {
+      test('saves Detail', () {
+        when(() => detailsApi.saveDetail(any())).thenAnswer((_) async {});
 
-        expect(detailsRepository.createDetail(detail1), completes);
-        verify(() => detailsApi.createDetail(detail1)).called(1);
+        expect(detailsRepository.saveDetail(detail1), completes);
+        verify(() => detailsApi.saveDetail(detail1)).called(1);
+      });
+    });
+
+    group('saveAllDetails', () {
+      test('saves list of Details', () {
+        when(() => detailsApi.saveAllDetails(any())).thenAnswer((_) async {});
+
+        expect(detailsRepository.saveAllDetails([detail1, detail2]), completes);
+        verify(() => detailsApi.saveAllDetails([detail1, detail2])).called(1);
       });
     });
 
@@ -100,6 +109,15 @@ void main() {
 
         expect(await detailsRepository.readAllDetails(), isEmpty);
         verify(() => detailsApi.readAllDetails()).called(1);
+      });
+    });
+
+    group('clearDetails', () {
+      test('clears all details in collection', () async {
+        when(() => detailsApi.clearDetails()).thenAnswer((_) async {});
+
+        expect(detailsRepository.clearDetails(), completes);
+        verify(() => detailsApi.clearDetails()).called(1);
       });
     });
   });
