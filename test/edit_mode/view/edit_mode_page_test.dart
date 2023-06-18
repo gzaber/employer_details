@@ -224,7 +224,7 @@ void main() {
       final detailsRepository = MockDetailsRepository();
       when(() => detailsRepository.readAllDetails())
           .thenAnswer((_) async => []);
-      when(() => detailsRepository.createDetail(any()))
+      when(() => detailsRepository.saveDetail(any()))
           .thenAnswer((_) async => {});
       when(() => editModeCubit.state).thenReturn(
         EditModeState(
@@ -325,17 +325,15 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageDeleteMenuItemKey1')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsOneWidget);
-
-      await tester.tap(
-          find.byKey(const Key('editModePageDeleteDialogApproveButtonKey')));
+      await tester
+          .tap(find.byKey(const Key('deleteDetailDialogApproveButtonKey')));
       await tester.pumpAndSettle();
 
       verify(() => editModeCubit.deleteDetail(id: details.first.id!)).called(1);
     });
 
     testWidgets(
-        'doesn\'t invoke any cubit methods when pops from dialog with false',
+        'doesn\'t invoke any cubit methods when pops from delete dialog with false',
         (tester) async {
       when(() => editModeCubit.state).thenReturn(
         EditModeState(
@@ -352,10 +350,8 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageDeleteMenuItemKey1')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsOneWidget);
-
-      await tester.tap(
-          find.byKey(const Key('editModePageDeleteDialogCancelButtonKey')));
+      await tester
+          .tap(find.byKey(const Key('deleteDetailDialogDeclineButtonKey')));
       await tester.pumpAndSettle();
 
       verifyNever(() => editModeCubit.deleteDetail(id: details.first.id!));
@@ -384,6 +380,48 @@ void main() {
 
       verify(() => editModeCubit.updateDetailPosition(oldIndex: 0, newIndex: 1))
           .called(1);
+    });
+
+    testWidgets('exports details', (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(
+          status: EditModeStatus.success,
+          details: details,
+        ),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageExportButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Approve'));
+      await tester.pumpAndSettle();
+
+      verify(() => editModeCubit.exportDetails(path: '', fileName: ''))
+          .called(1);
+    });
+
+    testWidgets('imports details', (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        const EditModeState(status: EditModeStatus.success),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageImportButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Approve'));
+      await tester.pumpAndSettle();
+
+      verify(() => editModeCubit.importDetails(path: '')).called(1);
     });
   });
 }

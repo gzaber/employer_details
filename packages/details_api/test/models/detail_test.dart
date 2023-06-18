@@ -77,5 +77,49 @@ void main() {
         );
       });
     });
+
+    group('fromJson', () {
+      test('works properly', () {
+        expect(
+          Detail.fromJson({
+            "id": 2,
+            "title": "title2",
+            "description": "description2",
+            "iconData": 54321,
+            "position": 9,
+          }),
+          equals(
+            createDetail(
+              id: 2,
+              title: 'title2',
+              description: 'description2',
+              iconData: 54321,
+              position: 9,
+            ),
+          ),
+        );
+      });
+    });
+
+    group('toJson', () {
+      test('works properly', () {
+        expect(
+          Detail(
+            id: 2,
+            title: 'title2',
+            description: 'description2',
+            iconData: 54321,
+            position: 9,
+          ).toJson(),
+          equals({
+            "id": 2,
+            "title": "title2",
+            "description": "description2",
+            "iconData": 54321,
+            "position": 9,
+          }),
+        );
+      });
+    });
   });
 }

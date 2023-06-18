@@ -48,7 +48,7 @@ class ManageDetailView extends StatelessWidget {
             icon: const Icon(Icons.save),
             onPressed: () {
               context.read<ManageDetailCubit>().state.detail.id == null
-                  ? context.read<ManageDetailCubit>().createDetail()
+                  ? context.read<ManageDetailCubit>().saveDetail()
                   : context.read<ManageDetailCubit>().updateDetail();
             },
           ),

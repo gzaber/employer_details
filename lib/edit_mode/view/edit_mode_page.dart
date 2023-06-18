@@ -1,5 +1,6 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:details_repository/details_repository.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -53,16 +54,48 @@ class EditModeView extends StatelessWidget {
             ),
           ),
           MenuButton(
+            key: const Key('editModePageMenuButtonKey'),
             menuItems: [
               MenuItem(
-                icon: Icons.import_export,
-                text: 'Import',
-                onTap: () {},
+                key: const Key('editModePageExportButtonKey'),
+                icon: Icons.upload,
+                text: 'Export',
+                onTap: () async {
+                  ExportDetailsDialog.show(
+                    context,
+                    title: 'Export details',
+                    selectPathText: 'Select folder',
+                    pathLabel: 'Path',
+                    fileNameLabel: 'File name',
+                    declineButtonText: 'Cancel',
+                    approveButtonText: 'Approve',
+                  ).then((value) {
+                    if (value != null) {
+                      context
+                          .read<EditModeCubit>()
+                          .exportDetails(path: value.$1, fileName: value.$2);
+                    }
+                  });
+                },
               ),
               MenuItem(
-                icon: Icons.import_export,
-                text: 'Export',
-                onTap: () {},
+                key: const Key('editModePageImportButtonKey'),
+                icon: Icons.download,
+                text: 'Import',
+                onTap: () async {
+                  ImportDetailsDialog.show(
+                    context,
+                    title: 'Import details',
+                    selectFileText: 'Select file',
+                    fileLabel: 'File path',
+                    declineButtonText: 'Cancel',
+                    approveButtonText: 'Approve',
+                  ).then((value) {
+                    if (value != null) {
+                      context.read<EditModeCubit>().importDetails(path: value);
+                    }
+                  });
+                },
               ),
               MenuItem(
                 icon: Icons.share,
@@ -189,7 +222,13 @@ class _DetailItem extends StatelessWidget {
                       icon: Icons.delete,
                       text: 'Delete',
                       onTap: () {
-                        _showDeleteDialog(context).then((value) {
+                        DeleteDetailDialog.show(context,
+                                title: 'Delete detail',
+                                contentText:
+                                    'Are you sure you want to delete the detail?',
+                                declineButtonText: 'Decline',
+                                approveButtonText: 'Approve')
+                            .then((value) {
                           if (value == true) {
                             if (detail.id != null) {
                               context
@@ -208,29 +247,4 @@ class _DetailItem extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<bool?> _showDeleteDialog(BuildContext context) async {
-  return showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text('Delete detail'),
-          content: const Text('Are you sure you want to delete the detail?'),
-          actionsAlignment: MainAxisAlignment.spaceBetween,
-          actions: [
-            TextButton(
-              key: const Key('editModePageDeleteDialogCancelButtonKey'),
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            TextButton(
-              key: const Key('editModePageDeleteDialogApproveButtonKey'),
-              child: const Text('Approve'),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        );
-      });
 }
