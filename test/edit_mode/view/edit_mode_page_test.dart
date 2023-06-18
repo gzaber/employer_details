@@ -423,5 +423,24 @@ void main() {
 
       verify(() => editModeCubit.importDetails(path: '')).called(1);
     });
+
+    testWidgets('shares details', (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(
+          status: EditModeStatus.success,
+          details: details,
+        ),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageShareButtonKey')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditModeView), findsOneWidget);
+    });
   });
 }

@@ -90,7 +90,6 @@ jobs:
       - name: Create a Release APK
         uses: ncipollo/release-action@v1
         with:
-          allowUpdates: true
           artifacts: "android_release/*.apk"
           tag: v1.${{ env.VERSION_2ND_PLACE }}.${{ env.VERSION_3RD_PLACE }}
           token: ${{ secrets.RELEASE_TOKEN }}
