@@ -115,7 +115,7 @@ void main() {
       );
     });
 
-    testWidgets('renders info when there are no details', (tester) async {
+    testWidgets('renders HintCard when there are no details', (tester) async {
       when(() => detailsOverviewCubit.state).thenReturn(
         const DetailsOverviewState(
           status: DetailsOverviewStatus.success,
@@ -125,7 +125,7 @@ void main() {
 
       await tester.pumpView(detailsOverviewCubit: detailsOverviewCubit);
 
-      expect(find.text('No details yet'), findsOneWidget);
+      expect(find.byType(HintCard), findsOneWidget);
     });
 
     testWidgets('shows SnackBar with info when exception occurs',

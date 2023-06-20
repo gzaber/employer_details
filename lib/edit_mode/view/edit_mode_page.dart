@@ -140,12 +140,20 @@ class EditModeView extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          if (state.status == EditModeStatus.success) {
-            return state.details.isEmpty
-                ? const Center(child: Text('No details yet'))
-                : _DetailsReorderableList(details: state.details);
-          }
-          return Container();
+          return state.details.isEmpty
+              ? const Center(
+                  child: HintCard(
+                    title: 'No details yet',
+                    upperText: 'Go to:',
+                    hintMenuVisualisations: [
+                      HintMenuVisualisation(
+                          icon: Icons.add_circle_outline,
+                          text: 'Create detail'),
+                    ],
+                    lowerText: 'to create a new detail',
+                  ),
+                )
+              : _DetailsReorderableList(details: state.details);
         },
       ),
     );

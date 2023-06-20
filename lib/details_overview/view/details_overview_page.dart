@@ -76,7 +76,19 @@ class DetailsOverviewView extends StatelessWidget {
           }
           if (state.status == DetailsOverviewStatus.success) {
             return state.details.isEmpty
-                ? const Center(child: Text('No details yet'))
+                ? const Center(
+                    child: HintCard(
+                      title: 'No details yet',
+                      upperText: 'Go to:',
+                      hintMenuVisualisations: [
+                        HintMenuVisualisation(
+                            icon: Icons.more_vert, text: 'Menu'),
+                        HintMenuVisualisation(
+                            icon: Icons.edit, text: 'Edit mode'),
+                      ],
+                      lowerText: 'to add new details',
+                    ),
+                  )
                 : _DetailsList(details: state.details);
           }
           return Container();

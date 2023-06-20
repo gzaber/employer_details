@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:employer_details/edit_mode/edit_mode.dart';
@@ -80,7 +81,7 @@ void main() {
     });
   });
 
-  group('NewTimerView', () {
+  group('EditModeView', () {
     late EditModeCubit editModeCubit;
 
     final details = [
@@ -135,7 +136,7 @@ void main() {
       );
     });
 
-    testWidgets('renders info when there are no details', (tester) async {
+    testWidgets('renders HintCard when there are no details', (tester) async {
       when(() => editModeCubit.state).thenReturn(
         const EditModeState(
           status: EditModeStatus.success,
@@ -145,7 +146,7 @@ void main() {
 
       await tester.pumpView(editModeCubit: editModeCubit);
 
-      expect(find.text('No details yet'), findsOneWidget);
+      expect(find.byType(HintCard), findsOneWidget);
     });
 
     testWidgets('shows SnackBar with info when exception occurs',
