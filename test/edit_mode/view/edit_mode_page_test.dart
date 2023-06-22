@@ -289,27 +289,7 @@ void main() {
       verify(() => editModeCubit.getDetails()).called(1);
     });
 
-    testWidgets('shows dialog when delete menu item is tapped', (tester) async {
-      when(() => editModeCubit.state).thenReturn(
-        EditModeState(
-          status: EditModeStatus.success,
-          details: details,
-        ),
-      );
-
-      await tester.pumpView(editModeCubit: editModeCubit);
-
-      await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byKey(const Key('editModePageDeleteMenuItemKey1')));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AlertDialog), findsOneWidget);
-    });
-
-    testWidgets(
-        'deletes detail and reads list of details when pops from dialog with true',
+    testWidgets('shows dialog when delete detail menu item is tapped',
         (tester) async {
       when(() => editModeCubit.state).thenReturn(
         EditModeState(
@@ -326,15 +306,34 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageDeleteMenuItemKey1')));
       await tester.pumpAndSettle();
 
-      await tester
-          .tap(find.byKey(const Key('deleteDetailDialogApproveButtonKey')));
+      expect(find.byType(DeleteDialog), findsOneWidget);
+    });
+
+    testWidgets('deletes detail when pops from delete detail dialog with true',
+        (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(
+          status: EditModeStatus.success,
+          details: details,
+        ),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageDeleteMenuItemKey1')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('deleteDialogApproveButtonKey')));
       await tester.pumpAndSettle();
 
       verify(() => editModeCubit.deleteDetail(id: details.first.id!)).called(1);
     });
 
     testWidgets(
-        'doesn\'t invoke any cubit methods when pops from delete dialog with false',
+        'doesn\'t invoke cubit method when pops from delete detail dialog with false',
         (tester) async {
       when(() => editModeCubit.state).thenReturn(
         EditModeState(
@@ -351,8 +350,7 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageDeleteMenuItemKey1')));
       await tester.pumpAndSettle();
 
-      await tester
-          .tap(find.byKey(const Key('deleteDetailDialogDeclineButtonKey')));
+      await tester.tap(find.byKey(const Key('deleteDialogDeclineButtonKey')));
       await tester.pumpAndSettle();
 
       verifyNever(() => editModeCubit.deleteDetail(id: details.first.id!));
@@ -442,6 +440,65 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(EditModeView), findsOneWidget);
+    });
+
+    testWidgets('shows dialog when delete all details menu item is tapped',
+        (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(status: EditModeStatus.success, details: details),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageDeleteAllButtonKey')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(DeleteDialog), findsOneWidget);
+    });
+
+    testWidgets(
+        'deletes all details when pops from delete all details dialog with true',
+        (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(status: EditModeStatus.success, details: details),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageDeleteAllButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('deleteDialogApproveButtonKey')));
+      await tester.pumpAndSettle();
+
+      verify(() => editModeCubit.deleteAllDetails()).called(1);
+    });
+
+    testWidgets(
+        'doesn\'t invoke cubit method when pops from delete detail dialog with false',
+        (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(status: EditModeStatus.success, details: details),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageDeleteAllButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('deleteDialogDeclineButtonKey')));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => editModeCubit.deleteAllDetails());
     });
   });
 }

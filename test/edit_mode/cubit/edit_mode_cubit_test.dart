@@ -153,6 +153,54 @@ void main() {
           });
     });
 
+    group('deleteAllDetails', () {
+      blocTest<EditModeCubit, EditModeState>(
+          'emits state with success status and empty list of details when deleted successfully',
+          setUp: () {
+            when(() => detailsRepository.clearDetails())
+                .thenAnswer((_) async {});
+          },
+          build: () => createCubit(),
+          seed: () => EditModeState(
+                status: EditModeStatus.success,
+                details: [detail1, detail2],
+              ),
+          act: (cubit) => cubit.deleteAllDetails(),
+          expect: () => [
+                EditModeState(
+                    status: EditModeStatus.loading,
+                    details: [detail1, detail2]),
+                const EditModeState(
+                    status: EditModeStatus.success, details: []),
+              ],
+          verify: (_) {
+            verify(() => detailsRepository.clearDetails()).called(1);
+          });
+
+      blocTest<EditModeCubit, EditModeState>(
+          'emits state with failure status when failure occured',
+          setUp: () {
+            when(() => detailsRepository.clearDetails()).thenThrow(Exception());
+          },
+          build: () => createCubit(),
+          seed: () => EditModeState(
+                status: EditModeStatus.success,
+                details: [detail1, detail2],
+              ),
+          act: (cubit) => cubit.deleteAllDetails(),
+          expect: () => [
+                EditModeState(
+                    status: EditModeStatus.loading,
+                    details: [detail1, detail2]),
+                EditModeState(
+                    status: EditModeStatus.failure,
+                    details: [detail1, detail2]),
+              ],
+          verify: (_) {
+            verify(() => detailsRepository.clearDetails()).called(1);
+          });
+    });
+
     group('updateDetailPosition', () {
       blocTest<EditModeCubit, EditModeState>(
         'emits state with success status and updated list when old index is greater than new index',

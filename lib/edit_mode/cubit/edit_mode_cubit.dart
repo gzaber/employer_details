@@ -53,6 +53,16 @@ class EditModeCubit extends Cubit<EditModeState> {
     }
   }
 
+  void deleteAllDetails() async {
+    emit(state.copyWith(status: EditModeStatus.loading));
+    try {
+      await _detailsRepository.clearDetails();
+      emit(state.copyWith(status: EditModeStatus.success, details: []));
+    } catch (_) {
+      emit(state.copyWith(status: EditModeStatus.failure));
+    }
+  }
+
   void updateDetailPosition({
     required int oldIndex,
     required int newIndex,

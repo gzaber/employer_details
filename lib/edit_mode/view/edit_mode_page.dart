@@ -118,6 +118,24 @@ class EditModeView extends StatelessWidget {
                   ]);
                 },
               ),
+              MenuItem(
+                key: const Key('editModePageDeleteAllButtonKey'),
+                icon: Icons.delete_forever,
+                text: 'Delete all',
+                onTap: () {
+                  DeleteDialog.show(context,
+                          title: 'Delete all details',
+                          contentText:
+                              'Are you sure you want to delete all the details?',
+                          declineButtonText: 'Decline',
+                          approveButtonText: 'Approve')
+                      .then((value) {
+                    if (value == true) {
+                      context.read<EditModeCubit>().deleteAllDetails();
+                    }
+                  });
+                },
+              ),
             ],
           ),
         ],
@@ -246,7 +264,7 @@ class _DetailItem extends StatelessWidget {
                       icon: Icons.delete,
                       text: 'Delete',
                       onTap: () {
-                        DeleteDetailDialog.show(context,
+                        DeleteDialog.show(context,
                                 title: 'Delete detail',
                                 contentText:
                                     'Are you sure you want to delete the detail?',
