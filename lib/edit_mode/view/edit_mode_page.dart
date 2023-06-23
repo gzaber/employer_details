@@ -143,13 +143,18 @@ class EditModeView extends StatelessWidget {
       body: BlocConsumer<EditModeCubit, EditModeState>(
         listener: (context, state) {
           if (state.status == EditModeStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text('Something went wrong'),
-                ),
-              );
+            CustomSnackBar.show(
+              context: context,
+              text: 'Something went wrong',
+              backgroundColor: Theme.of(context).colorScheme.error,
+            );
+          }
+          if (state.isExported == true) {
+            CustomSnackBar.show(
+              context: context,
+              text: 'Successfully exported',
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            );
           }
         },
         builder: (context, state) {

@@ -57,13 +57,11 @@ class ManageDetailView extends StatelessWidget {
       body: BlocConsumer<ManageDetailCubit, ManageDetailState>(
         listener: (context, state) {
           if (state.status == ManageDetailStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text('Something went wrong'),
-                ),
-              );
+            CustomSnackBar.show(
+              context: context,
+              text: 'Something went wrong',
+              backgroundColor: Theme.of(context).colorScheme.error,
+            );
           }
           if (state.status == ManageDetailStatus.saveSuccess) {
             Navigator.pop(context, true);

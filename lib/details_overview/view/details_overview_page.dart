@@ -59,13 +59,11 @@ class DetailsOverviewView extends StatelessWidget {
         listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {
           if (state.status == DetailsOverviewStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text('Something went wrong'),
-                ),
-              );
+            CustomSnackBar.show(
+              context: context,
+              text: 'Something went wrong',
+              backgroundColor: Theme.of(context).colorScheme.error,
+            );
           }
         },
         builder: (context, state) {

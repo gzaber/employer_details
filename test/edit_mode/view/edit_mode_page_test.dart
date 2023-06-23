@@ -404,6 +404,28 @@ void main() {
           .called(1);
     });
 
+    testWidgets('shows SnackBar with export confirmation', (tester) async {
+      when(() => editModeCubit.state)
+          .thenReturn(const EditModeState(status: EditModeStatus.loading));
+      whenListen(
+        editModeCubit,
+        Stream.fromIterable(
+          const [EditModeState(isExported: true)],
+        ),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pump();
+
+      expect(
+        find.descendant(
+          of: find.byType(SnackBar),
+          matching: find.text('Successfully exported'),
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('imports details', (tester) async {
       when(() => editModeCubit.state).thenReturn(
         const EditModeState(status: EditModeStatus.success),
