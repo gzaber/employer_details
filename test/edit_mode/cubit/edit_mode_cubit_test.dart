@@ -290,7 +290,7 @@ void main() {
 
     group('exportDetails', () {
       blocTest<EditModeCubit, EditModeState>(
-        'emits state with success status when file saved successfully',
+        'emits state with success status and export confirmation when file saved successfully',
         setUp: () {
           when(() => mockFile.writeAsString(any()))
               .thenAnswer((_) async => mockFile);
@@ -305,7 +305,13 @@ void main() {
           EditModeState(
               status: EditModeStatus.loading, details: [detail1, detail2]),
           EditModeState(
-              status: EditModeStatus.success, details: [detail1, detail2]),
+              status: EditModeStatus.success,
+              details: [detail1, detail2],
+              isExported: true),
+          EditModeState(
+              status: EditModeStatus.success,
+              details: [detail1, detail2],
+              isExported: false),
         ],
       );
 

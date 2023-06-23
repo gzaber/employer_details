@@ -32,7 +32,7 @@ void main() {
     test('props are correct', () {
       expect(
         createState().props,
-        [EditModeStatus.loading, []],
+        [EditModeStatus.loading, [], false],
       );
     });
 
@@ -46,17 +46,23 @@ void main() {
 
       test('retains old parameter value if null is provided', () {
         expect(
-          createState().copyWith(status: null, details: null),
+          createState().copyWith(status: null, details: null, isExported: null),
           equals(createState()),
         );
       });
 
       test('replaces non-null parameters', () {
         expect(
-          createState()
-              .copyWith(status: EditModeStatus.success, details: details),
+          createState().copyWith(
+            status: EditModeStatus.success,
+            details: details,
+            isExported: true,
+          ),
           equals(
-            EditModeState(status: EditModeStatus.success, details: details),
+            EditModeState(
+                status: EditModeStatus.success,
+                details: details,
+                isExported: true),
           ),
         );
       });

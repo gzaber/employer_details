@@ -101,7 +101,8 @@ class EditModeCubit extends Cubit<EditModeState> {
         await _fileSystem
             .file('$path/$fileName.json')
             .writeAsString(jsonString);
-        emit(state.copyWith(status: EditModeStatus.success));
+        emit(state.copyWith(status: EditModeStatus.success, isExported: true));
+        emit(state.copyWith(isExported: false));
       } catch (_) {
         emit(state.copyWith(status: EditModeStatus.failure));
       }
