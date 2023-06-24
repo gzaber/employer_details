@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DeleteDetailDialog extends StatelessWidget {
-  const DeleteDetailDialog({
+class DeleteDialog extends StatelessWidget {
+  const DeleteDialog({
     Key? key,
     required this.title,
     required this.contentText,
@@ -25,7 +25,7 @@ class DeleteDetailDialog extends StatelessWidget {
       context: context,
       useRootNavigator: false,
       barrierDismissible: false,
-      builder: (_) => DeleteDetailDialog(
+      builder: (_) => DeleteDialog(
         title: title,
         contentText: contentText,
         declineButtonText: declineButtonText,
@@ -42,12 +42,12 @@ class DeleteDetailDialog extends StatelessWidget {
       actionsAlignment: MainAxisAlignment.spaceBetween,
       actions: [
         TextButton(
-          key: const Key('deleteDetailDialogDeclineButtonKey'),
+          key: const Key('deleteDialogDeclineButtonKey'),
           child: Text(declineButtonText),
           onPressed: () => Navigator.pop(context, false),
         ),
         TextButton(
-          key: const Key('deleteDetailDialogApproveButtonKey'),
+          key: const Key('deleteDialogApproveButtonKey'),
           child: Text(approveButtonText),
           onPressed: () => Navigator.pop(context, true),
         ),

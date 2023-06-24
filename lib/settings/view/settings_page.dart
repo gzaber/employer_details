@@ -25,6 +25,9 @@ class SettingsPage extends StatelessWidget {
         children: [
           ListTile(
             title: const Text('Theme'),
+            subtitle: settingsState.isDarkTheme
+                ? const Text('dark')
+                : const Text('light'),
             leading: const Icon(Icons.contrast),
             trailing: ElevatedButton(
               key: const Key('settingsPageToggleThemeButtonKey'),
@@ -39,6 +42,8 @@ class SettingsPage extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Color scheme'),
+            subtitle: Text(
+                AppColors.colors[settingsState.colorSchemeCode] ?? 'unknown'),
             leading: const Icon(Icons.color_lens),
             trailing: ElevatedButton(
               key: const Key('settingsPageSelectColorButtonKey'),
@@ -47,7 +52,7 @@ class SettingsPage extends StatelessWidget {
                   context,
                   title: 'Select color',
                   declineButtonText: 'Cancel',
-                  colors: AppColors.colors,
+                  colors: AppColors.colors.keys.map((c) => Color(c)).toList(),
                 ).then((color) {
                   if (color != null) {
                     context

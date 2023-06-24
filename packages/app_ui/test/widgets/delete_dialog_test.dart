@@ -13,7 +13,7 @@ void main() {
       mockNavigator = MockNavigator();
     });
 
-    buildDeleteDetailDialog() => const DeleteDetailDialog(
+    buildDeleteDetailDialog() => const DeleteDialog(
           title: 'title',
           contentText: 'contentText',
           declineButtonText: 'declineButtonText',
@@ -23,7 +23,7 @@ void main() {
     testWidgets('show method shows dialog', (tester) async {
       await tester.pumpTest(
         builder: (context) => IconButton(
-          onPressed: () => DeleteDetailDialog.show(
+          onPressed: () => DeleteDialog.show(
             context,
             title: 'title',
             contentText: 'contentText',
@@ -37,7 +37,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.delete));
       await tester.pumpAndSettle();
 
-      expect(find.byType(DeleteDetailDialog), findsOneWidget);
+      expect(find.byType(DeleteDialog), findsOneWidget);
     });
 
     testWidgets('pops with true when approve button is tapped', (tester) async {
@@ -48,8 +48,7 @@ void main() {
         ),
       );
 
-      await tester
-          .tap(find.byKey(const Key('deleteDetailDialogApproveButtonKey')));
+      await tester.tap(find.byKey(const Key('deleteDialogApproveButtonKey')));
 
       verify(() => mockNavigator.pop<bool>(true)).called(1);
     });
@@ -63,8 +62,7 @@ void main() {
         ),
       );
 
-      await tester
-          .tap(find.byKey(const Key('deleteDetailDialogDeclineButtonKey')));
+      await tester.tap(find.byKey(const Key('deleteDialogDeclineButtonKey')));
 
       verify(() => mockNavigator.pop<bool>(false)).called(1);
     });

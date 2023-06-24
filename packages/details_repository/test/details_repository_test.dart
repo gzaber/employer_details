@@ -1,5 +1,6 @@
 import 'package:details_api/details_api.dart';
 import 'package:details_repository/details_repository.dart';
+import 'package:file/file.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -7,10 +8,19 @@ class MockDetailsApi extends Mock implements DetailsApi {}
 
 class FakeDetail extends Fake implements Detail {}
 
+class MockFileSystem extends Mock implements FileSystem {}
+
+class MockFile extends Mock implements File {}
+
 void main() {
   group('DetailsRepository', () {
     late DetailsApi detailsApi;
     late DetailsRepository detailsRepository;
+    late FileSystem mockFileSystem;
+    late File mockFile;
+
+    final jsonDetailsString =
+        '[{"id":1,"title":"title1","description":"description1","iconData":12345,"position":1}]';
 
     final detail1 = Detail(
       id: 1,
@@ -32,13 +42,28 @@ void main() {
     });
 
     setUp(() {
+      mockFileSystem = MockFileSystem();
+      mockFile = MockFile();
       detailsApi = MockDetailsApi();
-      detailsRepository = DetailsRepository(detailsApi);
+      detailsRepository =
+          DetailsRepository(detailsApi, fileSystem: mockFileSystem);
+
+      when(() => mockFileSystem.file(any())).thenReturn(mockFile);
     });
 
     group('constructor', () {
-      test('works properly', () {
-        expect(() => DetailsRepository(detailsApi), returnsNormally);
+      test('does not require FileSystem instance', () {
+        expect(
+          () => DetailsRepository(detailsApi),
+          returnsNormally,
+        );
+      });
+
+      test('works properly when FileSystem instance is provided', () {
+        expect(
+          () => DetailsRepository(detailsApi, fileSystem: mockFileSystem),
+          returnsNormally,
+        );
       });
     });
 
@@ -118,6 +143,35 @@ void main() {
 
         expect(detailsRepository.clearDetails(), completes);
         verify(() => detailsApi.clearDetails()).called(1);
+      });
+    });
+
+    group('writeDetailsToFile', () {
+      test('writes details to file', () {
+        when(() => mockFile.writeAsString(any()))
+            .thenAnswer((_) async => mockFile);
+
+        expect(
+          detailsRepository
+              .writeDetailsToFile(pathToFile: 'pathToFile', details: [detail1]),
+          completes,
+        );
+
+        verify(() => mockFile.writeAsString(jsonDetailsString)).called(1);
+      });
+    });
+
+    group('readDetailsFromFile', () {
+      test('reads details from file', () async {
+        when(() => mockFile.readAsString())
+            .thenAnswer((_) async => jsonDetailsString);
+
+        expect(
+            await detailsRepository.readDetailsFromFile(
+                pathToFile: 'pathToFile'),
+            equals([detail1]));
+
+        verify(() => mockFile.readAsString()).called(1);
       });
     });
   });

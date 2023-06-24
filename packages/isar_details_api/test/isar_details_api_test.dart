@@ -5,6 +5,11 @@ import 'package:test/test.dart';
 
 class MockIsarCollection extends Mock implements IsarCollection<DetailModel> {}
 
+class MockQuery extends Mock implements Query<DetailModel> {}
+
+class MockQueryBuilderInternal extends Mock
+    implements QueryBuilderInternal<DetailModel> {}
+
 class FakeDetailModel extends Fake implements DetailModel {}
 
 class FakeIsar extends Fake implements Isar {
@@ -81,7 +86,7 @@ void main() {
     });
 
     group('saveDetail', () {
-      test('saves Detail into database', () async {
+      test('saves detail into database', () async {
         expect(
           isarDetailsApi.saveDetail(detail1),
           completes,
@@ -94,7 +99,7 @@ void main() {
     });
 
     group('saveAllDetails', () {
-      test('saves list of Details into database', () {
+      test('saves list of details into database', () {
         expect(isarDetailsApi.saveAllDetails([detail1, detail2]), completes);
 
         verify(() => mockIsarCollection.putAll([
@@ -105,7 +110,7 @@ void main() {
     });
 
     group('updateDetail', () {
-      test('updates existing Detail', () async {
+      test('updates existing detail', () async {
         expect(
           isarDetailsApi.updateDetail(detail1),
           completes,
@@ -118,7 +123,7 @@ void main() {
     });
 
     group('deleteDetail', () {
-      test('deletes Detail from database', () async {
+      test('deletes detail from database', () async {
         expect(
           isarDetailsApi.deleteDetail(1),
           completes,
@@ -131,7 +136,7 @@ void main() {
     });
 
     group('readDetail', () {
-      test('reads Detail from database', () async {
+      test('reads detail from database', () async {
         expect(
           isarDetailsApi.readDetail(1),
           completes,
@@ -140,6 +145,31 @@ void main() {
         verify(
           () => mockIsarCollection.get(1),
         ).called(1);
+      });
+    });
+
+    group('readAllDetails', () {
+      late QueryBuilder<DetailModel, DetailModel, QWhere> mockQueryBuilder;
+      late QueryBuilderInternal<DetailModel> mockQueryBuilderInternal;
+      late Query<DetailModel> mockQuery;
+
+      setUp(() {
+        mockQueryBuilderInternal = MockQueryBuilderInternal();
+        mockQueryBuilder = QueryBuilder<DetailModel, DetailModel, QWhere>(
+          mockQueryBuilderInternal,
+        );
+        mockQuery = MockQuery();
+
+        when(() => mockIsarCollection.where()).thenReturn(mockQueryBuilder);
+        when(() => mockQueryBuilder.build()).thenReturn(mockQuery);
+        when(() => mockQuery.findAll()).thenAnswer((_) async =>
+            [DetailModel.fromDetail(detail1), DetailModel.fromDetail(detail2)]);
+      });
+
+      test('reads all details from database', () {
+        expect(isarDetailsApi.readAllDetails(), completes);
+
+        verify(() => mockIsarCollection.where()).called(1);
       });
     });
 

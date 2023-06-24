@@ -54,13 +54,11 @@ class AppView extends StatelessWidget {
             previous.hasFailure != current.hasFailure,
         listener: (context, state) {
           if (state.hasFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text('Something went wrong with settings'),
-                ),
-              );
+            CustomSnackBar.show(
+              context: context,
+              text: 'Something went wrong with settings',
+              backgroundColor: Theme.of(context).colorScheme.error,
+            );
           }
         },
         child: const DetailsOverviewPage(),

@@ -96,7 +96,9 @@ class EditModeView extends StatelessWidget {
                     approveButtonText: 'Approve',
                   ).then((value) {
                     if (value != null) {
-                      context.read<EditModeCubit>().importDetails(path: value);
+                      context
+                          .read<EditModeCubit>()
+                          .importDetails(pathToFile: value);
                     }
                   });
                 },
@@ -118,6 +120,24 @@ class EditModeView extends StatelessWidget {
                   ]);
                 },
               ),
+              MenuItem(
+                key: const Key('editModePageDeleteAllButtonKey'),
+                icon: Icons.delete_forever,
+                text: 'Delete all',
+                onTap: () {
+                  DeleteDialog.show(context,
+                          title: 'Delete all details',
+                          contentText:
+                              'Are you sure you want to delete all the details?',
+                          declineButtonText: 'Decline',
+                          approveButtonText: 'Approve')
+                      .then((value) {
+                    if (value == true) {
+                      context.read<EditModeCubit>().deleteAllDetails();
+                    }
+                  });
+                },
+              ),
             ],
           ),
         ],
@@ -125,13 +145,18 @@ class EditModeView extends StatelessWidget {
       body: BlocConsumer<EditModeCubit, EditModeState>(
         listener: (context, state) {
           if (state.status == EditModeStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text('Something went wrong'),
-                ),
-              );
+            CustomSnackBar.show(
+              context: context,
+              text: 'Something went wrong',
+              backgroundColor: Theme.of(context).colorScheme.error,
+            );
+          }
+          if (state.isExported == true) {
+            CustomSnackBar.show(
+              context: context,
+              text: 'Successfully exported',
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            );
           }
         },
         builder: (context, state) {
@@ -140,12 +165,20 @@ class EditModeView extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          if (state.status == EditModeStatus.success) {
-            return state.details.isEmpty
-                ? const Center(child: Text('No details yet'))
-                : _DetailsReorderableList(details: state.details);
-          }
-          return Container();
+          return state.details.isEmpty
+              ? const Center(
+                  child: HintCard(
+                    title: 'No details yet',
+                    upperText: 'Go to:',
+                    hintMenuVisualisations: [
+                      HintMenuVisualisation(
+                          icon: Icons.add_circle_outline,
+                          text: 'Create detail'),
+                    ],
+                    lowerText: 'to create a new detail',
+                  ),
+                )
+              : _DetailsReorderableList(details: state.details);
         },
       ),
     );
@@ -238,7 +271,7 @@ class _DetailItem extends StatelessWidget {
                       icon: Icons.delete,
                       text: 'Delete',
                       onTap: () {
-                        DeleteDetailDialog.show(context,
+                        DeleteDialog.show(context,
                                 title: 'Delete detail',
                                 contentText:
                                     'Are you sure you want to delete the detail?',
