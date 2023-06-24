@@ -96,7 +96,9 @@ class EditModeView extends StatelessWidget {
                     approveButtonText: 'Approve',
                   ).then((value) {
                     if (value != null) {
-                      context.read<EditModeCubit>().importDetails(path: value);
+                      context
+                          .read<EditModeCubit>()
+                          .importDetails(pathToFile: value);
                     }
                   });
                 },

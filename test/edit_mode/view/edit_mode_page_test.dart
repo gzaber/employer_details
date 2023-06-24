@@ -442,7 +442,7 @@ void main() {
       await tester.tap(find.text('Approve'));
       await tester.pumpAndSettle();
 
-      verify(() => editModeCubit.importDetails(path: '')).called(1);
+      verify(() => editModeCubit.importDetails(pathToFile: '')).called(1);
     });
 
     testWidgets('shares details', (tester) async {

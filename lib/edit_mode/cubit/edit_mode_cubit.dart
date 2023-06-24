@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:details_repository/details_repository.dart';
 import 'package:equatable/equatable.dart';
-import 'package:file/file.dart';
-import 'package:file/local.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'edit_mode_state.dart';
@@ -12,13 +9,10 @@ part 'edit_mode_state.dart';
 class EditModeCubit extends Cubit<EditModeState> {
   EditModeCubit({
     required DetailsRepository detailsRepository,
-    FileSystem? fileSystem,
   })  : _detailsRepository = detailsRepository,
-        _fileSystem = fileSystem ?? const LocalFileSystem(),
         super(const EditModeState());
 
   final DetailsRepository _detailsRepository;
-  final FileSystem _fileSystem;
 
   void getDetails() async {
     emit(state.copyWith(status: EditModeStatus.loading));
@@ -90,40 +84,34 @@ class EditModeCubit extends Cubit<EditModeState> {
   }
 
   void exportDetails({
-    required String? path,
+    required String path,
     required String fileName,
   }) async {
-    if (path != null) {
-      emit(state.copyWith(status: EditModeStatus.loading));
-      try {
-        final jsonDetails = state.details.map((d) => d.toJson()).toList();
-        final jsonString = jsonEncode(jsonDetails);
-        await _fileSystem
-            .file('$path/$fileName.json')
-            .writeAsString(jsonString);
-        emit(state.copyWith(status: EditModeStatus.success, isExported: true));
-        emit(state.copyWith(isExported: false));
-      } catch (_) {
-        emit(state.copyWith(status: EditModeStatus.failure));
-      }
+    emit(state.copyWith(status: EditModeStatus.loading));
+    try {
+      await _detailsRepository.writeDetailsToFile(
+        pathToFile: '$path/$fileName.json',
+        details: state.details,
+      );
+      emit(state.copyWith(status: EditModeStatus.success, isExported: true));
+      emit(state.copyWith(isExported: false));
+    } catch (_) {
+      emit(state.copyWith(status: EditModeStatus.failure));
     }
   }
 
-  void importDetails({required String? path}) async {
-    if (path != null) {
-      emit(state.copyWith(status: EditModeStatus.loading));
-      try {
-        final data = await _fileSystem.file(path).readAsString();
-        final List<dynamic> jsonDetails = jsonDecode(data);
-        final details = jsonDetails.map((d) => Detail.fromJson(d)).toList();
-        await _detailsRepository.clearDetails();
-        await _detailsRepository.saveAllDetails(details);
-        emit(
-          state.copyWith(status: EditModeStatus.success, details: details),
-        );
-      } catch (_) {
-        emit(state.copyWith(status: EditModeStatus.failure));
-      }
+  void importDetails({required String pathToFile}) async {
+    emit(state.copyWith(status: EditModeStatus.loading));
+    try {
+      final details =
+          await _detailsRepository.readDetailsFromFile(pathToFile: pathToFile);
+      await _detailsRepository.clearDetails();
+      await _detailsRepository.saveAllDetails(details);
+      emit(
+        state.copyWith(status: EditModeStatus.success, details: details),
+      );
+    } catch (_) {
+      emit(state.copyWith(status: EditModeStatus.failure));
     }
   }
 }
