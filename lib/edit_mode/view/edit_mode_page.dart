@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:details_repository/details_repository.dart';
 
@@ -108,16 +105,12 @@ class EditModeView extends StatelessWidget {
                 icon: Icons.share,
                 text: 'Share',
                 onTap: () async {
-                  final details = context.read<EditModeCubit>().state.details;
-                  final jsonDetails = details.map((d) => d.toJson()).toList();
-                  final jsonString = jsonEncode(jsonDetails);
-                  await Share.shareXFiles([
-                    XFile.fromData(
-                      Uint8List.fromList(jsonString.codeUnits),
-                      name: 'shared_details.json',
-                      mimeType: 'application/json',
-                    )
-                  ]);
+                  context.read<EditModeCubit>().convertAllDetailsToXFile();
+                  final xFileAllDetails =
+                      context.read<EditModeCubit>().state.xFileAllDetails;
+                  if (xFileAllDetails != null) {
+                    await Share.shareXFiles([xFileAllDetails]);
+                  }
                 },
               ),
               MenuItem(

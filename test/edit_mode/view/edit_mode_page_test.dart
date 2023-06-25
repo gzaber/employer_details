@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:details_repository/details_repository.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
+import 'package:share_plus/share_plus.dart';
 
 extension PumpWidgetX on WidgetTester {
   Future<void> pumpView({
@@ -450,6 +453,7 @@ void main() {
         EditModeState(
           status: EditModeStatus.success,
           details: details,
+          xFileAllDetails: XFile.fromData(Uint8List.fromList([])),
         ),
       );
 
@@ -461,7 +465,7 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageShareButtonKey')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(EditModeView), findsOneWidget);
+      verify(() => editModeCubit.convertAllDetailsToXFile()).called(1);
     });
 
     testWidgets('shows dialog when delete all details menu item is tapped',

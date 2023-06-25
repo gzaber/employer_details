@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:cross_file/cross_file.dart';
 import 'package:details_api/details_api.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
@@ -55,5 +57,15 @@ class DetailsRepository {
     final List<dynamic> jsonDetails = jsonDecode(data);
     final details = jsonDetails.map((d) => Detail.fromJson(d)).toList();
     return details;
+  }
+
+  XFile convertAllDetailsToXFile(List<Detail> details) {
+    final jsonDetails = details.map((d) => d.toJson()).toList();
+    final jsonString = jsonEncode(jsonDetails);
+    return XFile.fromData(
+      Uint8List.fromList(jsonString.codeUnits),
+      name: 'shared_details.json',
+      mimeType: 'application/json',
+    );
   }
 }
