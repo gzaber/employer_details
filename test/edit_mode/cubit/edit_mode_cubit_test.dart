@@ -3,14 +3,18 @@ import 'package:details_repository/details_repository.dart';
 import 'package:employer_details/edit_mode/edit_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MockDetailsRepository extends Mock implements DetailsRepository {}
+
+class MockXFile extends Mock implements XFile {}
 
 class FakeDetail extends Fake implements Detail {}
 
 void main() {
   group('EditModeCubit', () {
     late DetailsRepository detailsRepository;
+    late XFile mockXFile;
 
     final detail1 = Detail(
         id: 1,
@@ -34,6 +38,7 @@ void main() {
 
     setUp(() {
       detailsRepository = MockDetailsRepository();
+      mockXFile = MockXFile();
     });
 
     test('constructor works properly', () {
@@ -378,6 +383,64 @@ void main() {
         verify: (_) {
           verify(() => detailsRepository.readDetailsFromFile(
               pathToFile: 'path/fileName.json')).called(1);
+        },
+      );
+    });
+
+    group('convertAllDetailsToXFile', () {
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with success status and XFile when details converted successfully',
+        setUp: () {
+          when(() => detailsRepository.convertAllDetailsToXFile(any()))
+              .thenAnswer((_) => mockXFile);
+        },
+        build: () => createCubit(),
+        act: (cubit) => cubit.convertAllDetailsToXFile(),
+        seed: () => EditModeState(
+            status: EditModeStatus.success,
+            details: [detail1, detail2],
+            xFileAllDetails: null),
+        expect: () => [
+          EditModeState(
+              status: EditModeStatus.loading,
+              details: [detail1, detail2],
+              xFileAllDetails: null),
+          EditModeState(
+              status: EditModeStatus.success,
+              details: [detail1, detail2],
+              xFileAllDetails: mockXFile),
+        ],
+        verify: (_) {
+          verify(() => detailsRepository
+              .convertAllDetailsToXFile([detail1, detail2])).called(1);
+        },
+      );
+
+      blocTest<EditModeCubit, EditModeState>(
+        'emits state with failure status when failure occured',
+        setUp: () {
+          when(() => detailsRepository.convertAllDetailsToXFile(any()))
+              .thenThrow(Exception());
+        },
+        build: () => createCubit(),
+        act: (cubit) => cubit.convertAllDetailsToXFile(),
+        seed: () => EditModeState(
+            status: EditModeStatus.success,
+            details: [detail1, detail2],
+            xFileAllDetails: null),
+        expect: () => [
+          EditModeState(
+              status: EditModeStatus.loading,
+              details: [detail1, detail2],
+              xFileAllDetails: null),
+          EditModeState(
+              status: EditModeStatus.failure,
+              details: [detail1, detail2],
+              xFileAllDetails: null),
+        ],
+        verify: (_) {
+          verify(() => detailsRepository
+              .convertAllDetailsToXFile([detail1, detail2])).called(1);
         },
       );
     });

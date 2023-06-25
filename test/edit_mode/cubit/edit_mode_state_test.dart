@@ -32,7 +32,7 @@ void main() {
     test('props are correct', () {
       expect(
         createState().props,
-        [EditModeStatus.loading, [], false],
+        [EditModeStatus.loading, [], false, null],
       );
     });
 
@@ -46,7 +46,12 @@ void main() {
 
       test('retains old parameter value if null is provided', () {
         expect(
-          createState().copyWith(status: null, details: null, isExported: null),
+          createState().copyWith(
+            status: null,
+            details: null,
+            isExported: null,
+            xFileAllDetails: null,
+          ),
           equals(createState()),
         );
       });

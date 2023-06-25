@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:details_repository/details_repository.dart';
 
@@ -61,9 +58,22 @@ class EditModeView extends StatelessWidget {
             key: const Key('editModePageMenuButtonKey'),
             menuItems: [
               MenuItem(
+                key: const Key('editModePageShareButtonKey'),
+                icon: Icons.share,
+                text: 'Share config',
+                onTap: () async {
+                  context.read<EditModeCubit>().convertAllDetailsToXFile();
+                  final xFileAllDetails =
+                      context.read<EditModeCubit>().state.xFileAllDetails;
+                  if (xFileAllDetails != null) {
+                    await Share.shareXFiles([xFileAllDetails]);
+                  }
+                },
+              ),
+              MenuItem(
                 key: const Key('editModePageExportButtonKey'),
                 icon: Icons.upload,
-                text: 'Export',
+                text: 'Export config',
                 onTap: () async {
                   ExportDetailsDialog.show(
                     context,
@@ -85,7 +95,7 @@ class EditModeView extends StatelessWidget {
               MenuItem(
                 key: const Key('editModePageImportButtonKey'),
                 icon: Icons.download,
-                text: 'Import',
+                text: 'Import config',
                 onTap: () async {
                   ImportDetailsDialog.show(
                     context,
@@ -101,23 +111,6 @@ class EditModeView extends StatelessWidget {
                           .importDetails(pathToFile: value);
                     }
                   });
-                },
-              ),
-              MenuItem(
-                key: const Key('editModePageShareButtonKey'),
-                icon: Icons.share,
-                text: 'Share',
-                onTap: () async {
-                  final details = context.read<EditModeCubit>().state.details;
-                  final jsonDetails = details.map((d) => d.toJson()).toList();
-                  final jsonString = jsonEncode(jsonDetails);
-                  await Share.shareXFiles([
-                    XFile.fromData(
-                      Uint8List.fromList(jsonString.codeUnits),
-                      name: 'shared_details.json',
-                      mimeType: 'application/json',
-                    )
-                  ]);
                 },
               ),
               MenuItem(
@@ -249,6 +242,16 @@ class _DetailItem extends StatelessWidget {
               MenuButton(
                 key: Key('editModePageEditMenuButtonKey${detail.id}'),
                 menuItems: [
+                  MenuItem(
+                    key: Key('editModePageShareAsTextMenuItemKey${detail.id}'),
+                    icon: Icons.share,
+                    text: 'Share',
+                    onTap: () async {
+                      await Share.share(
+                        '${detail.title}\n${detail.description}',
+                      );
+                    },
+                  ),
                   MenuItem(
                     key: Key('editModePageEditMenuItemKey${detail.id}'),
                     icon: Icons.edit,

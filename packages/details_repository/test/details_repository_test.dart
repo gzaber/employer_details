@@ -1,3 +1,4 @@
+import 'package:cross_file/cross_file.dart';
 import 'package:details_api/details_api.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:file/file.dart';
@@ -172,6 +173,13 @@ void main() {
             equals([detail1]));
 
         verify(() => mockFile.readAsString()).called(1);
+      });
+    });
+
+    group('convertAllDetailsToXFile', () {
+      test('converts details to XFile', () {
+        expect(detailsRepository.convertAllDetailsToXFile([detail1]),
+            isA<XFile>());
       });
     });
   });

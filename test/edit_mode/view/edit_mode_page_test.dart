@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:details_repository/details_repository.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
+import 'package:share_plus/share_plus.dart';
 
 extension PumpWidgetX on WidgetTester {
   Future<void> pumpView({
@@ -289,6 +292,27 @@ void main() {
       verify(() => editModeCubit.getDetails()).called(1);
     });
 
+    testWidgets('shares detail as text when share menu item is tapped',
+        (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(
+          status: EditModeStatus.success,
+          details: details,
+        ),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
+      await tester.pumpAndSettle();
+
+      await tester
+          .tap(find.byKey(const Key('editModePageShareAsTextMenuItemKey1')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditModeView), findsOneWidget);
+    });
+
     testWidgets('shows dialog when delete detail menu item is tapped',
         (tester) async {
       when(() => editModeCubit.state).thenReturn(
@@ -381,6 +405,26 @@ void main() {
           .called(1);
     });
 
+    testWidgets('shares details', (tester) async {
+      when(() => editModeCubit.state).thenReturn(
+        EditModeState(
+          status: EditModeStatus.success,
+          details: details,
+          xFileAllDetails: XFile.fromData(Uint8List.fromList([])),
+        ),
+      );
+
+      await tester.pumpView(editModeCubit: editModeCubit);
+
+      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editModePageShareButtonKey')));
+      await tester.pumpAndSettle();
+
+      verify(() => editModeCubit.convertAllDetailsToXFile()).called(1);
+    });
+
     testWidgets('exports details', (tester) async {
       when(() => editModeCubit.state).thenReturn(
         EditModeState(
@@ -443,25 +487,6 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(() => editModeCubit.importDetails(pathToFile: '')).called(1);
-    });
-
-    testWidgets('shares details', (tester) async {
-      when(() => editModeCubit.state).thenReturn(
-        EditModeState(
-          status: EditModeStatus.success,
-          details: details,
-        ),
-      );
-
-      await tester.pumpView(editModeCubit: editModeCubit);
-
-      await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byKey(const Key('editModePageShareButtonKey')));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(EditModeView), findsOneWidget);
     });
 
     testWidgets('shows dialog when delete all details menu item is tapped',

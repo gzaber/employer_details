@@ -16,6 +16,7 @@ class MenuButton extends StatelessWidget {
         ...List.generate(
           menuItems.length,
           (index) => PopupMenuItem<int>(
+            padding: const EdgeInsets.all(12),
             value: index,
             child: menuItems[index],
           ),

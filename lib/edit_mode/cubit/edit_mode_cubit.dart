@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:details_repository/details_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 part 'edit_mode_state.dart';
 
@@ -110,6 +111,18 @@ class EditModeCubit extends Cubit<EditModeState> {
       emit(
         state.copyWith(status: EditModeStatus.success, details: details),
       );
+    } catch (_) {
+      emit(state.copyWith(status: EditModeStatus.failure));
+    }
+  }
+
+  void convertAllDetailsToXFile() {
+    emit(state.copyWith(status: EditModeStatus.loading));
+    try {
+      final xFileAllDetails =
+          _detailsRepository.convertAllDetailsToXFile(state.details);
+      emit(state.copyWith(
+          status: EditModeStatus.success, xFileAllDetails: xFileAllDetails));
     } catch (_) {
       emit(state.copyWith(status: EditModeStatus.failure));
     }
