@@ -40,16 +40,16 @@ class FakeDetail extends Fake implements Detail {}
 
 void main() {
   group('EditModePage', () {
-    late DetailsRepository detailsRepository;
+    late DetailsRepository mockDetailsRepository;
 
     setUp(() {
-      detailsRepository = MockDetailsRepository();
+      mockDetailsRepository = MockDetailsRepository();
     });
 
     testWidgets('is routable', (tester) async {
       await tester.pumpWidget(
         RepositoryProvider.value(
-          value: detailsRepository,
+          value: mockDetailsRepository,
           child: MaterialApp(
             home: Builder(
               builder: (context) => Scaffold(
@@ -73,7 +73,7 @@ void main() {
     testWidgets('renders EditModeView', (tester) async {
       await tester.pumpWidget(
         RepositoryProvider.value(
-          value: detailsRepository,
+          value: mockDetailsRepository,
           child: const MaterialApp(
             home: EditModePage(),
           ),
@@ -85,7 +85,8 @@ void main() {
   });
 
   group('EditModeView', () {
-    late EditModeCubit editModeCubit;
+    late DetailsRepository mockDetailsRepository;
+    late EditModeCubit mockEditModeCubit;
 
     final details = [
       Detail(
@@ -107,30 +108,31 @@ void main() {
     });
 
     setUp(() {
-      editModeCubit = MockEditModeCubit();
+      mockDetailsRepository = MockDetailsRepository();
+      mockEditModeCubit = MockEditModeCubit();
     });
 
     testWidgets('renders CircularProgressIndicator when loading data',
         (tester) async {
-      when(() => editModeCubit.state)
+      when(() => mockEditModeCubit.state)
           .thenReturn(const EditModeState(status: EditModeStatus.loading));
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets(
-        'renders ReorderableListView with Cards when loaded successfully',
+        'renders ReorderableListView with Cards when data loaded successfully',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       expect(
         find.descendant(
@@ -139,31 +141,32 @@ void main() {
       );
     });
 
-    testWidgets('renders HintCard when there are no details', (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+    testWidgets('renders HintCard when list of details is empty',
+        (tester) async {
+      when(() => mockEditModeCubit.state).thenReturn(
         const EditModeState(
           status: EditModeStatus.success,
           details: [],
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       expect(find.byType(HintCard), findsOneWidget);
     });
 
-    testWidgets('shows SnackBar with info when exception occurs',
+    testWidgets('shows SnackBar with info when failure occured',
         (tester) async {
-      when(() => editModeCubit.state)
+      when(() => mockEditModeCubit.state)
           .thenReturn(const EditModeState(status: EditModeStatus.loading));
       whenListen(
-        editModeCubit,
+        mockEditModeCubit,
         Stream.fromIterable(
           const [EditModeState(status: EditModeStatus.failure)],
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
       await tester.pump();
 
       expect(
@@ -177,8 +180,7 @@ void main() {
 
     testWidgets('navigates to ManageDetailPage when edit menu item is tapped',
         (tester) async {
-      final detailsRepository = MockDetailsRepository();
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
@@ -186,8 +188,8 @@ void main() {
       );
 
       await tester.pumpView(
-        editModeCubit: editModeCubit,
-        detailsRepository: detailsRepository,
+        editModeCubit: mockEditModeCubit,
+        detailsRepository: mockDetailsRepository,
       );
 
       await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
@@ -202,8 +204,7 @@ void main() {
     testWidgets(
         'navigates to ManageDetailPage when create detail button is tapped',
         (tester) async {
-      final detailsRepository = MockDetailsRepository();
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
@@ -211,8 +212,8 @@ void main() {
       );
 
       await tester.pumpView(
-        editModeCubit: editModeCubit,
-        detailsRepository: detailsRepository,
+        editModeCubit: mockEditModeCubit,
+        detailsRepository: mockDetailsRepository,
       );
 
       await tester
@@ -225,12 +226,11 @@ void main() {
     testWidgets(
         'reads details when pops with true from ManageDetailPage after creating detail',
         (tester) async {
-      final detailsRepository = MockDetailsRepository();
-      when(() => detailsRepository.readAllDetails())
+      when(() => mockDetailsRepository.readAllDetails())
           .thenAnswer((_) async => []);
-      when(() => detailsRepository.saveDetail(any()))
+      when(() => mockDetailsRepository.saveDetail(any()))
           .thenAnswer((_) async => {});
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
@@ -238,8 +238,8 @@ void main() {
       );
 
       await tester.pumpView(
-        editModeCubit: editModeCubit,
-        detailsRepository: detailsRepository,
+        editModeCubit: mockEditModeCubit,
+        detailsRepository: mockDetailsRepository,
       );
 
       await tester
@@ -253,18 +253,17 @@ void main() {
 
       expect(find.byType(EditModeView), findsOneWidget);
 
-      verify(() => editModeCubit.getDetails()).called(1);
+      verify(() => mockEditModeCubit.getDetails()).called(1);
     });
 
     testWidgets(
         'reads details when pops with true from ManageDetailPage after updating detail',
         (tester) async {
-      final detailsRepository = MockDetailsRepository();
-      when(() => detailsRepository.readDetail(any()))
+      when(() => mockDetailsRepository.readDetail(any()))
           .thenAnswer((_) async => details.first);
-      when(() => detailsRepository.updateDetail(any()))
+      when(() => mockDetailsRepository.updateDetail(any()))
           .thenAnswer((_) async => {});
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
@@ -272,8 +271,8 @@ void main() {
       );
 
       await tester.pumpView(
-        editModeCubit: editModeCubit,
-        detailsRepository: detailsRepository,
+        editModeCubit: mockEditModeCubit,
+        detailsRepository: mockDetailsRepository,
       );
 
       await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
@@ -289,19 +288,19 @@ void main() {
 
       expect(find.byType(EditModeView), findsOneWidget);
 
-      verify(() => editModeCubit.getDetails()).called(1);
+      verify(() => mockEditModeCubit.getDetails()).called(1);
     });
 
     testWidgets('shares detail as text when share menu item is tapped',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
       await tester.pumpAndSettle();
@@ -313,16 +312,16 @@ void main() {
       expect(find.byType(EditModeView), findsOneWidget);
     });
 
-    testWidgets('shows dialog when delete detail menu item is tapped',
+    testWidgets('shows DeleteDialog when delete detail menu item is tapped',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
       await tester.pumpAndSettle();
@@ -333,16 +332,16 @@ void main() {
       expect(find.byType(DeleteDialog), findsOneWidget);
     });
 
-    testWidgets('deletes detail when pops from delete detail dialog with true',
+    testWidgets('deletes detail when pops from DeleteDialog with true',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
       await tester.pumpAndSettle();
@@ -353,20 +352,21 @@ void main() {
       await tester.tap(find.byKey(const Key('deleteDialogApproveButtonKey')));
       await tester.pumpAndSettle();
 
-      verify(() => editModeCubit.deleteDetail(id: details.first.id!)).called(1);
+      verify(() => mockEditModeCubit.deleteDetail(id: details.first.id!))
+          .called(1);
     });
 
     testWidgets(
-        'doesn\'t invoke cubit method when pops from delete detail dialog with false',
+        'doesn\'t invoke cubit method when pops from DeletDialog with false',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageEditMenuButtonKey1')));
       await tester.pumpAndSettle();
@@ -377,21 +377,21 @@ void main() {
       await tester.tap(find.byKey(const Key('deleteDialogDeclineButtonKey')));
       await tester.pumpAndSettle();
 
-      verifyNever(() => editModeCubit.deleteDetail(id: details.first.id!));
-      verifyNever(() => editModeCubit.getDetails());
+      verifyNever(() => mockEditModeCubit.deleteDetail(id: details.first.id!));
+      verifyNever(() => mockEditModeCubit.getDetails());
     });
 
     testWidgets(
         'reorders details when detail item is dragged to a new position',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       final TestGesture drag = await tester.startGesture(tester
           .getCenter(find.byKey(const Key('editModePageDetailItemKey0'))));
@@ -401,12 +401,13 @@ void main() {
       await drag.up();
       await tester.pumpAndSettle();
 
-      verify(() => editModeCubit.updateDetailPosition(oldIndex: 0, newIndex: 1))
+      verify(() =>
+              mockEditModeCubit.updateDetailPosition(oldIndex: 0, newIndex: 1))
           .called(1);
     });
 
     testWidgets('shares details', (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
@@ -414,7 +415,7 @@ void main() {
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
       await tester.pumpAndSettle();
@@ -422,18 +423,18 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageShareButtonKey')));
       await tester.pumpAndSettle();
 
-      verify(() => editModeCubit.convertAllDetailsToXFile()).called(1);
+      verify(() => mockEditModeCubit.convertAllDetailsToXFile()).called(1);
     });
 
     testWidgets('exports details', (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(
           status: EditModeStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
       await tester.pumpAndSettle();
@@ -444,21 +445,21 @@ void main() {
       await tester.tap(find.text('Approve'));
       await tester.pumpAndSettle();
 
-      verify(() => editModeCubit.exportDetails(path: '', fileName: ''))
+      verify(() => mockEditModeCubit.exportDetails(path: '', fileName: ''))
           .called(1);
     });
 
     testWidgets('shows SnackBar with export confirmation', (tester) async {
-      when(() => editModeCubit.state)
+      when(() => mockEditModeCubit.state)
           .thenReturn(const EditModeState(status: EditModeStatus.loading));
       whenListen(
-        editModeCubit,
+        mockEditModeCubit,
         Stream.fromIterable(
           const [EditModeState(isExported: true)],
         ),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
       await tester.pump();
 
       expect(
@@ -471,11 +472,11 @@ void main() {
     });
 
     testWidgets('imports details', (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         const EditModeState(status: EditModeStatus.success),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
       await tester.pumpAndSettle();
@@ -486,16 +487,17 @@ void main() {
       await tester.tap(find.text('Approve'));
       await tester.pumpAndSettle();
 
-      verify(() => editModeCubit.importDetails(pathToFile: '')).called(1);
+      verify(() => mockEditModeCubit.importDetails(pathToFile: '')).called(1);
     });
 
-    testWidgets('shows dialog when delete all details menu item is tapped',
+    testWidgets(
+        'shows DeleteDialog when delete all details menu item is tapped',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(status: EditModeStatus.success, details: details),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
       await tester.pumpAndSettle();
@@ -509,11 +511,11 @@ void main() {
     testWidgets(
         'deletes all details when pops from delete all details dialog with true',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(status: EditModeStatus.success, details: details),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
       await tester.pumpAndSettle();
@@ -524,17 +526,17 @@ void main() {
       await tester.tap(find.byKey(const Key('deleteDialogApproveButtonKey')));
       await tester.pumpAndSettle();
 
-      verify(() => editModeCubit.deleteAllDetails()).called(1);
+      verify(() => mockEditModeCubit.deleteAllDetails()).called(1);
     });
 
     testWidgets(
-        'doesn\'t invoke cubit method when pops from delete detail dialog with false',
+        'doesn\'t invoke cubit method when pops from DeleteDialog with false',
         (tester) async {
-      when(() => editModeCubit.state).thenReturn(
+      when(() => mockEditModeCubit.state).thenReturn(
         EditModeState(status: EditModeStatus.success, details: details),
       );
 
-      await tester.pumpView(editModeCubit: editModeCubit);
+      await tester.pumpView(editModeCubit: mockEditModeCubit);
 
       await tester.tap(find.byKey(const Key('editModePageMenuButtonKey')));
       await tester.pumpAndSettle();
@@ -545,7 +547,7 @@ void main() {
       await tester.tap(find.byKey(const Key('deleteDialogDeclineButtonKey')));
       await tester.pumpAndSettle();
 
-      verifyNever(() => editModeCubit.deleteAllDetails());
+      verifyNever(() => mockEditModeCubit.deleteAllDetails());
     });
   });
 }

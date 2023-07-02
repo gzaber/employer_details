@@ -13,7 +13,7 @@ class FakeDetail extends Fake implements Detail {}
 
 void main() {
   group('EditModeCubit', () {
-    late DetailsRepository detailsRepository;
+    late DetailsRepository mockDetailsRepository;
     late XFile mockXFile;
 
     final detail1 = Detail(
@@ -30,14 +30,14 @@ void main() {
         position: 1);
 
     EditModeCubit createCubit() =>
-        EditModeCubit(detailsRepository: detailsRepository);
+        EditModeCubit(detailsRepository: mockDetailsRepository);
 
     setUpAll(() {
       registerFallbackValue(FakeDetail());
     });
 
     setUp(() {
-      detailsRepository = MockDetailsRepository();
+      mockDetailsRepository = MockDetailsRepository();
       mockXFile = MockXFile();
     });
 
@@ -56,7 +56,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
           'emits state with success status and list of details',
           setUp: () {
-            when(() => detailsRepository.readAllDetails())
+            when(() => mockDetailsRepository.readAllDetails())
                 .thenAnswer((_) async => [detail1, detail2]);
           },
           build: () => createCubit(),
@@ -69,12 +69,13 @@ void main() {
                 ),
               ],
           verify: (_) {
-            verify(() => detailsRepository.readAllDetails()).called(1);
+            verify(() => mockDetailsRepository.readAllDetails()).called(1);
           });
 
-      blocTest<EditModeCubit, EditModeState>('emits state with failure status',
+      blocTest<EditModeCubit, EditModeState>(
+          'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.readAllDetails())
+            when(() => mockDetailsRepository.readAllDetails())
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
@@ -84,7 +85,7 @@ void main() {
                 EditModeState(status: EditModeStatus.failure),
               ],
           verify: (_) {
-            verify(() => detailsRepository.readAllDetails()).called(1);
+            verify(() => mockDetailsRepository.readAllDetails()).called(1);
           });
     });
 
@@ -92,9 +93,9 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
           'emits state with success status and updated list of details when deleted successfully',
           setUp: () {
-            when(() => detailsRepository.deleteDetail(1))
+            when(() => mockDetailsRepository.deleteDetail(1))
                 .thenAnswer((_) async {});
-            when(() => detailsRepository.updateDetail(any()))
+            when(() => mockDetailsRepository.updateDetail(any()))
                 .thenAnswer((_) async {});
           },
           build: () => createCubit(),
@@ -112,15 +113,15 @@ void main() {
                     details: [detail2.copyWith(position: 0)]),
               ],
           verify: (_) {
-            verify(() => detailsRepository.deleteDetail(1)).called(1);
-            verify(() => detailsRepository
+            verify(() => mockDetailsRepository.deleteDetail(1)).called(1);
+            verify(() => mockDetailsRepository
                 .updateDetail(detail2.copyWith(position: 0))).called(1);
           });
 
       blocTest<EditModeCubit, EditModeState>(
           'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.deleteDetail(1))
+            when(() => mockDetailsRepository.deleteDetail(1))
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
@@ -138,7 +139,7 @@ void main() {
                     details: [detail1, detail2]),
               ],
           verify: (_) {
-            verify(() => detailsRepository.deleteDetail(1)).called(1);
+            verify(() => mockDetailsRepository.deleteDetail(1)).called(1);
           });
     });
 
@@ -146,7 +147,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
           'emits state with success status and empty list of details when deleted successfully',
           setUp: () {
-            when(() => detailsRepository.clearDetails())
+            when(() => mockDetailsRepository.clearDetails())
                 .thenAnswer((_) async {});
           },
           build: () => createCubit(),
@@ -163,13 +164,14 @@ void main() {
                     status: EditModeStatus.success, details: []),
               ],
           verify: (_) {
-            verify(() => detailsRepository.clearDetails()).called(1);
+            verify(() => mockDetailsRepository.clearDetails()).called(1);
           });
 
       blocTest<EditModeCubit, EditModeState>(
           'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.clearDetails()).thenThrow(Exception());
+            when(() => mockDetailsRepository.clearDetails())
+                .thenThrow(Exception());
           },
           build: () => createCubit(),
           seed: () => EditModeState(
@@ -186,7 +188,7 @@ void main() {
                     details: [detail1, detail2]),
               ],
           verify: (_) {
-            verify(() => detailsRepository.clearDetails()).called(1);
+            verify(() => mockDetailsRepository.clearDetails()).called(1);
           });
     });
 
@@ -194,7 +196,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
         'emits state with success status and updated list when old index is greater than new index',
         setUp: () {
-          when(() => detailsRepository.updateDetail(any()))
+          when(() => mockDetailsRepository.updateDetail(any()))
               .thenAnswer((_) async {});
         },
         build: () => createCubit(),
@@ -214,19 +216,17 @@ void main() {
           ]),
         ],
         verify: (_) {
-          verify(() =>
-                  detailsRepository.updateDetail(detail1.copyWith(position: 1)))
-              .called(1);
-          verify(() =>
-                  detailsRepository.updateDetail(detail2.copyWith(position: 0)))
-              .called(1);
+          verify(() => mockDetailsRepository
+              .updateDetail(detail1.copyWith(position: 1))).called(1);
+          verify(() => mockDetailsRepository
+              .updateDetail(detail2.copyWith(position: 0))).called(1);
         },
       );
 
       blocTest<EditModeCubit, EditModeState>(
         'emits state with success status and updated list when old index is less than new index',
         setUp: () {
-          when(() => detailsRepository.updateDetail(any()))
+          when(() => mockDetailsRepository.updateDetail(any()))
               .thenAnswer((_) async {});
         },
         build: () => createCubit(),
@@ -242,15 +242,15 @@ void main() {
               status: EditModeStatus.success, details: [detail1, detail2]),
         ],
         verify: (_) {
-          verify(() => detailsRepository.updateDetail(detail1)).called(1);
-          verify(() => detailsRepository.updateDetail(detail2)).called(1);
+          verify(() => mockDetailsRepository.updateDetail(detail1)).called(1);
+          verify(() => mockDetailsRepository.updateDetail(detail2)).called(1);
         },
       );
 
       blocTest<EditModeCubit, EditModeState>(
         'emits state with failure status when failure occured',
         setUp: () {
-          when(() => detailsRepository.updateDetail(any()))
+          when(() => mockDetailsRepository.updateDetail(any()))
               .thenThrow(Exception());
         },
         build: () => createCubit(),
@@ -270,9 +270,8 @@ void main() {
           ]),
         ],
         verify: (_) {
-          verify(() =>
-                  detailsRepository.updateDetail(detail2.copyWith(position: 0)))
-              .called(1);
+          verify(() => mockDetailsRepository
+              .updateDetail(detail2.copyWith(position: 0))).called(1);
         },
       );
     });
@@ -281,7 +280,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
         'emits state with success status and export confirmation when file saved successfully',
         setUp: () {
-          when(() => detailsRepository.writeDetailsToFile(
+          when(() => mockDetailsRepository.writeDetailsToFile(
               pathToFile: any(named: 'pathToFile'),
               details: any(named: 'details'))).thenAnswer((_) async {});
         },
@@ -304,7 +303,7 @@ void main() {
               isExported: false),
         ],
         verify: (_) {
-          verify(() => detailsRepository.writeDetailsToFile(
+          verify(() => mockDetailsRepository.writeDetailsToFile(
               pathToFile: 'path/fileName.json',
               details: [detail1, detail2])).called(1);
         },
@@ -313,7 +312,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
         'emits state with failure status when failure occured',
         setUp: () {
-          when(() => detailsRepository.writeDetailsToFile(
+          when(() => mockDetailsRepository.writeDetailsToFile(
               pathToFile: any(named: 'pathToFile'),
               details: any(named: 'details'))).thenThrow(Exception());
         },
@@ -330,7 +329,7 @@ void main() {
               status: EditModeStatus.failure, details: [detail1, detail2]),
         ],
         verify: (_) {
-          verify(() => detailsRepository.writeDetailsToFile(
+          verify(() => mockDetailsRepository.writeDetailsToFile(
               pathToFile: 'path/fileName.json',
               details: [detail1, detail2])).called(1);
         },
@@ -339,13 +338,14 @@ void main() {
 
     group('importDetails', () {
       blocTest<EditModeCubit, EditModeState>(
-        'emits state with success status and details when read file successfully',
+        'emits state with success status and list of details when read file successfully',
         setUp: () {
-          when(() => detailsRepository.readDetailsFromFile(
+          when(() => mockDetailsRepository.readDetailsFromFile(
                   pathToFile: any(named: 'pathToFile')))
               .thenAnswer((_) async => [detail1, detail2]);
-          when(() => detailsRepository.clearDetails()).thenAnswer((_) async {});
-          when(() => detailsRepository.saveAllDetails(any()))
+          when(() => mockDetailsRepository.clearDetails())
+              .thenAnswer((_) async {});
+          when(() => mockDetailsRepository.saveAllDetails(any()))
               .thenAnswer((_) async {});
         },
         build: () => createCubit(),
@@ -358,10 +358,10 @@ void main() {
               status: EditModeStatus.success, details: [detail1, detail2]),
         ],
         verify: (_) {
-          verify(() => detailsRepository.readDetailsFromFile(
+          verify(() => mockDetailsRepository.readDetailsFromFile(
               pathToFile: 'path/fileName.json')).called(1);
-          verify(() => detailsRepository.clearDetails()).called(1);
-          verify(() => detailsRepository.saveAllDetails([detail1, detail2]))
+          verify(() => mockDetailsRepository.clearDetails()).called(1);
+          verify(() => mockDetailsRepository.saveAllDetails([detail1, detail2]))
               .called(1);
         },
       );
@@ -369,7 +369,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
         'emits state with failure status when failure occured',
         setUp: () {
-          when(() => detailsRepository.readDetailsFromFile(
+          when(() => mockDetailsRepository.readDetailsFromFile(
               pathToFile: any(named: 'pathToFile'))).thenThrow(Exception());
         },
         build: () => createCubit(),
@@ -381,7 +381,7 @@ void main() {
           EditModeState(status: EditModeStatus.failure),
         ],
         verify: (_) {
-          verify(() => detailsRepository.readDetailsFromFile(
+          verify(() => mockDetailsRepository.readDetailsFromFile(
               pathToFile: 'path/fileName.json')).called(1);
         },
       );
@@ -391,7 +391,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
         'emits state with success status and XFile when details converted successfully',
         setUp: () {
-          when(() => detailsRepository.convertAllDetailsToXFile(any()))
+          when(() => mockDetailsRepository.convertAllDetailsToXFile(any()))
               .thenAnswer((_) => mockXFile);
         },
         build: () => createCubit(),
@@ -411,7 +411,7 @@ void main() {
               xFileAllDetails: mockXFile),
         ],
         verify: (_) {
-          verify(() => detailsRepository
+          verify(() => mockDetailsRepository
               .convertAllDetailsToXFile([detail1, detail2])).called(1);
         },
       );
@@ -419,7 +419,7 @@ void main() {
       blocTest<EditModeCubit, EditModeState>(
         'emits state with failure status when failure occured',
         setUp: () {
-          when(() => detailsRepository.convertAllDetailsToXFile(any()))
+          when(() => mockDetailsRepository.convertAllDetailsToXFile(any()))
               .thenThrow(Exception());
         },
         build: () => createCubit(),
@@ -439,7 +439,7 @@ void main() {
               xFileAllDetails: null),
         ],
         verify: (_) {
-          verify(() => detailsRepository
+          verify(() => mockDetailsRepository
               .convertAllDetailsToXFile([detail1, detail2])).called(1);
         },
       );

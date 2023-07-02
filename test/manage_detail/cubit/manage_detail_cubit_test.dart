@@ -10,7 +10,7 @@ class FakeDetail extends Fake implements Detail {}
 
 void main() {
   group('ManageDetailCubit', () {
-    late DetailsRepository detailsRepository;
+    late DetailsRepository mockDetailsRepository;
 
     final detail = Detail(
         id: 1,
@@ -20,14 +20,14 @@ void main() {
         position: 0);
 
     ManageDetailCubit createCubit() =>
-        ManageDetailCubit(detailsRepository: detailsRepository);
+        ManageDetailCubit(detailsRepository: mockDetailsRepository);
 
     setUpAll(() {
       registerFallbackValue(FakeDetail());
     });
 
     setUp(() {
-      detailsRepository = MockDetailsRepository();
+      mockDetailsRepository = MockDetailsRepository();
     });
 
     test('constructor works properly', () {
@@ -82,7 +82,7 @@ void main() {
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with success status and detail when successfully found',
           setUp: () {
-            when(() => detailsRepository.readDetail(any()))
+            when(() => mockDetailsRepository.readDetail(any()))
                 .thenAnswer((_) async => detail);
           },
           build: () => createCubit(),
@@ -93,7 +93,8 @@ void main() {
                     status: ManageDetailStatus.success, detail: detail),
               ],
           verify: (_) {
-            verify(() => detailsRepository.readDetail(detail.id!)).called(1);
+            verify(() => mockDetailsRepository.readDetail(detail.id!))
+                .called(1);
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
@@ -102,13 +103,13 @@ void main() {
           act: (cubit) => cubit.getDetail(null),
           expect: () => [],
           verify: (_) {
-            verifyNever(() => detailsRepository.readDetail(any()));
+            verifyNever(() => mockDetailsRepository.readDetail(any()));
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.readDetail(any()))
+            when(() => mockDetailsRepository.readDetail(any()))
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
@@ -118,13 +119,14 @@ void main() {
                 ManageDetailState(status: ManageDetailStatus.failure),
               ],
           verify: (_) {
-            verify(() => detailsRepository.readDetail(detail.id!)).called(1);
+            verify(() => mockDetailsRepository.readDetail(detail.id!))
+                .called(1);
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with failure status when detail not found',
           setUp: () {
-            when(() => detailsRepository.readDetail(any()))
+            when(() => mockDetailsRepository.readDetail(any()))
                 .thenAnswer((_) async => null);
           },
           build: () => createCubit(),
@@ -134,7 +136,8 @@ void main() {
                 ManageDetailState(status: ManageDetailStatus.failure),
               ],
           verify: (_) {
-            verify(() => detailsRepository.readDetail(detail.id!)).called(1);
+            verify(() => mockDetailsRepository.readDetail(detail.id!))
+                .called(1);
           });
     });
 
@@ -149,9 +152,9 @@ void main() {
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with success status when detail saved successfully',
           setUp: () {
-            when(() => detailsRepository.readAllDetails())
+            when(() => mockDetailsRepository.readAllDetails())
                 .thenAnswer((_) async => [detail]);
-            when(() => detailsRepository.saveDetail(any()))
+            when(() => mockDetailsRepository.saveDetail(any()))
                 .thenAnswer((_) async {});
           },
           build: () => createCubit(),
@@ -164,16 +167,16 @@ void main() {
                     status: ManageDetailStatus.saveSuccess, detail: newDetail),
               ],
           verify: (_) {
-            verify(() => detailsRepository
+            verify(() => mockDetailsRepository
                 .saveDetail(newDetail.copyWith(position: 1))).called(1);
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.readAllDetails())
+            when(() => mockDetailsRepository.readAllDetails())
                 .thenAnswer((_) async => [detail]);
-            when(() => detailsRepository.saveDetail(any()))
+            when(() => mockDetailsRepository.saveDetail(any()))
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
@@ -186,7 +189,7 @@ void main() {
                     status: ManageDetailStatus.failure, detail: newDetail),
               ],
           verify: (_) {
-            verify(() => detailsRepository
+            verify(() => mockDetailsRepository
                 .saveDetail(newDetail.copyWith(position: 1))).called(1);
           });
     });
@@ -195,7 +198,7 @@ void main() {
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with success status when detail updated successfully',
           setUp: () {
-            when(() => detailsRepository.updateDetail(any()))
+            when(() => mockDetailsRepository.updateDetail(any()))
                 .thenAnswer((_) async {});
           },
           build: () => createCubit(),
@@ -208,13 +211,13 @@ void main() {
                     status: ManageDetailStatus.saveSuccess, detail: detail),
               ],
           verify: (_) {
-            verify(() => detailsRepository.updateDetail(detail)).called(1);
+            verify(() => mockDetailsRepository.updateDetail(detail)).called(1);
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
           'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.updateDetail(any()))
+            when(() => mockDetailsRepository.updateDetail(any()))
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
@@ -227,7 +230,7 @@ void main() {
                     status: ManageDetailStatus.failure, detail: detail),
               ],
           verify: (_) {
-            verify(() => detailsRepository.updateDetail(detail)).called(1);
+            verify(() => mockDetailsRepository.updateDetail(detail)).called(1);
           });
     });
   });

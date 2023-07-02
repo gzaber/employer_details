@@ -38,8 +38,7 @@ void main() {
       expect(find.byType(SelectIconDialog), findsOneWidget);
     });
 
-    testWidgets('pops with icon data when icon avatar is tapped',
-        (tester) async {
+    testWidgets('pops with icon data when icon is tapped', (tester) async {
       await tester.pumpTest(builder: (context) {
         return MockNavigatorProvider(
           navigator: mockNavigator,

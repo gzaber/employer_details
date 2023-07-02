@@ -17,24 +17,24 @@ class MockSettingsCubit extends MockCubit<SettingsState>
     implements SettingsCubit {}
 
 void main() {
-  late DetailsRepository detailsRepository;
-  late SettingsRepository settingsRepository;
-  late SettingsCubit settingsCubit;
+  late DetailsRepository mockDetailsRepository;
+  late SettingsRepository mockSettingsRepository;
+  late SettingsCubit mockSettingsCubit;
 
   setUp(() {
-    detailsRepository = MockDetailsRepository();
-    settingsRepository = MockSettingsRepository();
-    settingsCubit = MockSettingsCubit();
+    mockDetailsRepository = MockDetailsRepository();
+    mockSettingsRepository = MockSettingsRepository();
+    mockSettingsCubit = MockSettingsCubit();
 
-    when(() => settingsCubit.state).thenReturn(const SettingsState());
+    when(() => mockSettingsCubit.state).thenReturn(const SettingsState());
   });
 
   group('App', () {
     testWidgets('renders AppView', (tester) async {
       await tester.pumpWidget(
         App(
-          detailsRepository: detailsRepository,
-          settingsRepository: settingsRepository,
+          detailsRepository: mockDetailsRepository,
+          settingsRepository: mockSettingsRepository,
         ),
       );
 
@@ -46,9 +46,9 @@ void main() {
     testWidgets('renders DetailsOverviewPage', (tester) async {
       await tester.pumpWidget(
         RepositoryProvider.value(
-          value: detailsRepository,
+          value: mockDetailsRepository,
           child: BlocProvider.value(
-            value: settingsCubit,
+            value: mockSettingsCubit,
             child: const AppView(),
           ),
         ),
@@ -57,9 +57,9 @@ void main() {
       expect(find.byType(DetailsOverviewPage), findsOneWidget);
     });
 
-    testWidgets('shows SnackBar when exception occurs', (tester) async {
+    testWidgets('shows SnackBar when failure occured', (tester) async {
       whenListen(
-          settingsCubit,
+          mockSettingsCubit,
           Stream.fromIterable([
             const SettingsState(),
             const SettingsState(hasFailure: true),
@@ -67,9 +67,9 @@ void main() {
 
       await tester.pumpWidget(
         RepositoryProvider.value(
-          value: detailsRepository,
+          value: mockDetailsRepository,
           child: BlocProvider.value(
-            value: settingsCubit,
+            value: mockSettingsCubit,
             child: const AppView(),
           ),
         ),

@@ -46,16 +46,16 @@ class MockSettingsCubit extends MockCubit<SettingsState>
 
 void main() {
   group('DetailsOverviewPage', () {
-    late DetailsRepository detailsRepository;
+    late DetailsRepository mockDetailsRepository;
 
     setUp(() {
-      detailsRepository = MockDetailsRepository();
+      mockDetailsRepository = MockDetailsRepository();
     });
 
     testWidgets('renders DetailsOverviewView', (tester) async {
       await tester.pumpWidget(
         RepositoryProvider.value(
-          value: detailsRepository,
+          value: mockDetailsRepository,
           child: const MaterialApp(
             home: DetailsOverviewPage(),
           ),
@@ -67,7 +67,7 @@ void main() {
   });
 
   group('DetailsOverviewView', () {
-    late DetailsOverviewCubit detailsOverviewCubit;
+    late DetailsOverviewCubit mockDetailsOverviewCubit;
 
     final details = [
       Detail(
@@ -85,29 +85,29 @@ void main() {
     ];
 
     setUp(() {
-      detailsOverviewCubit = MockDetailsOverviewCubit();
+      mockDetailsOverviewCubit = MockDetailsOverviewCubit();
     });
 
     testWidgets('renders CircularProgressIndicator when loading data',
         (tester) async {
-      when(() => detailsOverviewCubit.state).thenReturn(
+      when(() => mockDetailsOverviewCubit.state).thenReturn(
           const DetailsOverviewState(status: DetailsOverviewStatus.loading));
 
-      await tester.pumpView(detailsOverviewCubit: detailsOverviewCubit);
+      await tester.pumpView(detailsOverviewCubit: mockDetailsOverviewCubit);
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders ListView with Cards when loaded successfully',
         (tester) async {
-      when(() => detailsOverviewCubit.state).thenReturn(
+      when(() => mockDetailsOverviewCubit.state).thenReturn(
         DetailsOverviewState(
           status: DetailsOverviewStatus.success,
           details: details,
         ),
       );
 
-      await tester.pumpView(detailsOverviewCubit: detailsOverviewCubit);
+      await tester.pumpView(detailsOverviewCubit: mockDetailsOverviewCubit);
 
       expect(
         find.descendant(of: find.byType(ListView), matching: find.byType(Card)),
@@ -116,30 +116,30 @@ void main() {
     });
 
     testWidgets('renders HintCard when there are no details', (tester) async {
-      when(() => detailsOverviewCubit.state).thenReturn(
+      when(() => mockDetailsOverviewCubit.state).thenReturn(
         const DetailsOverviewState(
           status: DetailsOverviewStatus.success,
           details: [],
         ),
       );
 
-      await tester.pumpView(detailsOverviewCubit: detailsOverviewCubit);
+      await tester.pumpView(detailsOverviewCubit: mockDetailsOverviewCubit);
 
       expect(find.byType(HintCard), findsOneWidget);
     });
 
-    testWidgets('shows SnackBar with info when exception occurs',
+    testWidgets('shows SnackBar with info when failure occured',
         (tester) async {
-      when(() => detailsOverviewCubit.state).thenReturn(
+      when(() => mockDetailsOverviewCubit.state).thenReturn(
           const DetailsOverviewState(status: DetailsOverviewStatus.loading));
       whenListen(
-        detailsOverviewCubit,
+        mockDetailsOverviewCubit,
         Stream.fromIterable(
           const [DetailsOverviewState(status: DetailsOverviewStatus.failure)],
         ),
       );
 
-      await tester.pumpView(detailsOverviewCubit: detailsOverviewCubit);
+      await tester.pumpView(detailsOverviewCubit: mockDetailsOverviewCubit);
       await tester.pump();
 
       expect(
@@ -154,11 +154,11 @@ void main() {
     testWidgets('navigates to EditModePage when edit menu item is tapped',
         (tester) async {
       final detailsRepository = MockDetailsRepository();
-      when(() => detailsOverviewCubit.state).thenReturn(
+      when(() => mockDetailsOverviewCubit.state).thenReturn(
           const DetailsOverviewState(status: DetailsOverviewStatus.success));
 
       await tester.pumpView(
-        detailsOverviewCubit: detailsOverviewCubit,
+        detailsOverviewCubit: mockDetailsOverviewCubit,
         detailsRepository: detailsRepository,
       );
 
@@ -175,11 +175,11 @@ void main() {
     testWidgets('performs reading details when pops from EditModePage',
         (tester) async {
       final detailsRepository = MockDetailsRepository();
-      when(() => detailsOverviewCubit.state).thenReturn(
+      when(() => mockDetailsOverviewCubit.state).thenReturn(
           const DetailsOverviewState(status: DetailsOverviewStatus.success));
 
       await tester.pumpView(
-        detailsOverviewCubit: detailsOverviewCubit,
+        detailsOverviewCubit: mockDetailsOverviewCubit,
         detailsRepository: detailsRepository,
       );
 
@@ -192,18 +192,18 @@ void main() {
       await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
 
-      verify(() => detailsOverviewCubit.getDetails()).called(1);
+      verify(() => mockDetailsOverviewCubit.getDetails()).called(1);
     });
 
     testWidgets('navigates to SettingsPage when settings menu item is tapped',
         (tester) async {
       final settingsCubit = MockSettingsCubit();
       when(() => settingsCubit.state).thenReturn(const SettingsState());
-      when(() => detailsOverviewCubit.state).thenReturn(
+      when(() => mockDetailsOverviewCubit.state).thenReturn(
           const DetailsOverviewState(status: DetailsOverviewStatus.success));
 
       await tester.pumpView(
-        detailsOverviewCubit: detailsOverviewCubit,
+        detailsOverviewCubit: mockDetailsOverviewCubit,
         settingsCubit: settingsCubit,
       );
 
