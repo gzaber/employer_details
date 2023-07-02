@@ -15,8 +15,8 @@ class MockFile extends Mock implements File {}
 
 void main() {
   group('DetailsRepository', () {
-    late DetailsApi detailsApi;
     late DetailsRepository detailsRepository;
+    late DetailsApi mockDetailsApi;
     late FileSystem mockFileSystem;
     late File mockFile;
 
@@ -45,9 +45,9 @@ void main() {
     setUp(() {
       mockFileSystem = MockFileSystem();
       mockFile = MockFile();
-      detailsApi = MockDetailsApi();
+      mockDetailsApi = MockDetailsApi();
       detailsRepository =
-          DetailsRepository(detailsApi, fileSystem: mockFileSystem);
+          DetailsRepository(mockDetailsApi, fileSystem: mockFileSystem);
 
       when(() => mockFileSystem.file(any())).thenReturn(mockFile);
     });
@@ -55,14 +55,14 @@ void main() {
     group('constructor', () {
       test('does not require FileSystem instance', () {
         expect(
-          () => DetailsRepository(detailsApi),
+          () => DetailsRepository(mockDetailsApi),
           returnsNormally,
         );
       });
 
       test('works properly when FileSystem instance is provided', () {
         expect(
-          () => DetailsRepository(detailsApi, fileSystem: mockFileSystem),
+          () => DetailsRepository(mockDetailsApi, fileSystem: mockFileSystem),
           returnsNormally,
         );
       });
@@ -70,80 +70,86 @@ void main() {
 
     group('saveDetail', () {
       test('saves Detail', () {
-        when(() => detailsApi.saveDetail(any())).thenAnswer((_) async {});
+        when(() => mockDetailsApi.saveDetail(any())).thenAnswer((_) async {});
 
         expect(detailsRepository.saveDetail(detail1), completes);
-        verify(() => detailsApi.saveDetail(detail1)).called(1);
+        verify(() => mockDetailsApi.saveDetail(detail1)).called(1);
       });
     });
 
     group('saveAllDetails', () {
       test('saves list of Details', () {
-        when(() => detailsApi.saveAllDetails(any())).thenAnswer((_) async {});
+        when(() => mockDetailsApi.saveAllDetails(any()))
+            .thenAnswer((_) async {});
 
         expect(detailsRepository.saveAllDetails([detail1, detail2]), completes);
-        verify(() => detailsApi.saveAllDetails([detail1, detail2])).called(1);
+        verify(() => mockDetailsApi.saveAllDetails([detail1, detail2]))
+            .called(1);
       });
     });
 
     group('updateDetail', () {
       test('updates Detail', () {
-        when(() => detailsApi.updateDetail(any())).thenAnswer((_) async {});
+        when(() => mockDetailsApi.updateDetail(any())).thenAnswer((_) async {});
 
         expect(detailsRepository.updateDetail(detail1), completes);
-        verify(() => detailsApi.updateDetail(detail1)).called(1);
+        verify(() => mockDetailsApi.updateDetail(detail1)).called(1);
       });
     });
 
     group('deleteDetail', () {
       test('deletes Detail', () {
-        when(() => detailsApi.deleteDetail(any())).thenAnswer((_) async {});
+        when(() => mockDetailsApi.deleteDetail(any())).thenAnswer((_) async {});
 
         expect(detailsRepository.deleteDetail(1), completes);
-        verify(() => detailsApi.deleteDetail(1)).called(1);
+        verify(() => mockDetailsApi.deleteDetail(1)).called(1);
       });
     });
 
     group('readDetail', () {
-      test('returns Detail', () async {
-        when(() => detailsApi.readDetail(any()))
+      test('returns Detail when found by id', () async {
+        when(() => mockDetailsApi.readDetail(any()))
             .thenAnswer((_) async => detail1);
 
-        expect(await detailsRepository.readDetail(1), detail1);
-        verify(() => detailsApi.readDetail(1)).called(1);
+        expect(await detailsRepository.readDetail(1), equals(detail1));
+        verify(() => mockDetailsApi.readDetail(1)).called(1);
       });
 
       test('returns null if Detail doesn\'t exist', () async {
-        when(() => detailsApi.readDetail(any())).thenAnswer((_) async => null);
+        when(() => mockDetailsApi.readDetail(any()))
+            .thenAnswer((_) async => null);
 
         expect(await detailsRepository.readDetail(1), isNull);
-        verify(() => detailsApi.readDetail(1)).called(1);
+        verify(() => mockDetailsApi.readDetail(1)).called(1);
       });
     });
 
     group('readAllDetails', () {
       test('returns list of Details', () async {
-        when(() => detailsApi.readAllDetails())
+        when(() => mockDetailsApi.readAllDetails())
             .thenAnswer((_) async => [detail1, detail2]);
 
-        expect(await detailsRepository.readAllDetails(), [detail1, detail2]);
-        verify(() => detailsApi.readAllDetails()).called(1);
+        expect(
+          await detailsRepository.readAllDetails(),
+          equals([detail1, detail2]),
+        );
+        verify(() => mockDetailsApi.readAllDetails()).called(1);
       });
 
-      test('returns empty list if there are no Details', () async {
-        when(() => detailsApi.readAllDetails()).thenAnswer((_) async => []);
+      test('returns empty list when there are no Details', () async {
+        when(() => mockDetailsApi.readAllDetails()).thenAnswer((_) async => []);
 
         expect(await detailsRepository.readAllDetails(), isEmpty);
-        verify(() => detailsApi.readAllDetails()).called(1);
+        verify(() => mockDetailsApi.readAllDetails()).called(1);
       });
     });
 
     group('clearDetails', () {
       test('clears all details in collection', () async {
-        when(() => detailsApi.clearDetails()).thenAnswer((_) async {});
+        when(() => mockDetailsApi.clearDetails()).thenAnswer((_) async {});
 
         expect(detailsRepository.clearDetails(), completes);
-        verify(() => detailsApi.clearDetails()).called(1);
+        verify(() => mockDetailsApi.clearDetails()).called(1);
       });
     });
 

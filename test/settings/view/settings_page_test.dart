@@ -24,25 +24,25 @@ class MockSettingsCubit extends MockCubit<SettingsState>
 
 void main() {
   group('SettingsPage', () {
-    late SettingsCubit settingsCubit;
+    late SettingsCubit mockSettingsCubit;
 
     setUp(() {
-      settingsCubit = MockSettingsCubit();
-      when(() => settingsCubit.state).thenReturn(const SettingsState());
+      mockSettingsCubit = MockSettingsCubit();
+      when(() => mockSettingsCubit.state).thenReturn(const SettingsState());
     });
 
     testWidgets('invokes cubit method when toggle theme button is tapped',
         (tester) async {
-      await tester.pumpView(settingsCubit: settingsCubit);
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
       await tester
           .tap(find.byKey(const Key('settingsPageToggleThemeButtonKey')));
 
-      verify(() => settingsCubit.toggleTheme()).called(1);
+      verify(() => mockSettingsCubit.toggleTheme()).called(1);
     });
 
-    testWidgets('shows dialog when select color button is tapped',
+    testWidgets('shows SelectColorDialog when select color button is tapped',
         (tester) async {
-      await tester.pumpView(settingsCubit: settingsCubit);
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
       await tester
           .tap(find.byKey(const Key('settingsPageSelectColorButtonKey')));
       await tester.pumpAndSettle();
@@ -50,17 +50,18 @@ void main() {
       expect(find.byType(SelectColorDialog), findsOneWidget);
     });
 
-    testWidgets('invokes cubit method when pops from dialog with color',
+    testWidgets(
+        'invokes cubit method when pops from SelectColorDialog with color',
         (tester) async {
-      await tester.pumpView(settingsCubit: settingsCubit);
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
       await tester
           .tap(find.byKey(const Key('settingsPageSelectColorButtonKey')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('selectColorDialogColorBoxKey0')));
       await tester.pumpAndSettle();
 
-      verify(() => settingsCubit
-          .updateColorScheme(settingsCubit.state.colorSchemeCode)).called(1);
+      verify(() => mockSettingsCubit.updateColorScheme(
+          mockSettingsCubit.state.colorSchemeCode)).called(1);
     });
   });
 }

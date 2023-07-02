@@ -67,13 +67,13 @@ void main() {
             iconData: 54321,
             position: 9,
           ),
-          createDetail(
+          equals(createDetail(
             id: 2,
             title: 'title2',
             description: 'description2',
             iconData: 54321,
             position: 9,
-          ),
+          )),
         );
       });
     });

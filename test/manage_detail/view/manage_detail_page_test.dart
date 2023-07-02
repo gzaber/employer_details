@@ -1,3 +1,4 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:employer_details/manage_detail/manage_detail.dart';
@@ -29,16 +30,16 @@ class MockManageDetailCubit extends MockCubit<ManageDetailState>
 
 void main() {
   group('ManageDetailPage', () {
-    late DetailsRepository detailsRepository;
+    late DetailsRepository mockDetailsRepository;
 
     setUp(() {
-      detailsRepository = MockDetailsRepository();
+      mockDetailsRepository = MockDetailsRepository();
     });
 
     testWidgets('is routable', (tester) async {
       await tester.pumpWidget(
         RepositoryProvider.value(
-          value: detailsRepository,
+          value: mockDetailsRepository,
           child: MaterialApp(
             home: Builder(
               builder: (context) => Scaffold(
@@ -62,7 +63,7 @@ void main() {
     testWidgets('renders ManageDetailView', (tester) async {
       await tester.pumpWidget(
         RepositoryProvider.value(
-          value: detailsRepository,
+          value: mockDetailsRepository,
           child: const MaterialApp(
             home: ManageDetailPage(),
           ),
@@ -74,7 +75,7 @@ void main() {
   });
 
   group('ManageDetailView', () {
-    late ManageDetailCubit manageDetailCubit;
+    late ManageDetailCubit mockManageDetailCubit;
 
     final detail = Detail(
       id: 1,
@@ -85,13 +86,13 @@ void main() {
     );
 
     setUp(() {
-      manageDetailCubit = MockManageDetailCubit();
+      mockManageDetailCubit = MockManageDetailCubit();
     });
 
     testWidgets('renders correct AppBar text when id is null', (tester) async {
-      when(() => manageDetailCubit.state).thenReturn(ManageDetailState());
+      when(() => mockManageDetailCubit.state).thenReturn(ManageDetailState());
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       expect(
         find.descendant(
@@ -102,24 +103,24 @@ void main() {
 
     testWidgets('renders CircularProgressIndicator when loading data',
         (tester) async {
-      when(() => manageDetailCubit.state)
+      when(() => mockManageDetailCubit.state)
           .thenReturn(ManageDetailState(status: ManageDetailStatus.loading));
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders correct AppBar text when id is not null',
         (tester) async {
-      when(() => manageDetailCubit.state).thenReturn(
+      when(() => mockManageDetailCubit.state).thenReturn(
         ManageDetailState(
           status: ManageDetailStatus.success,
           detail: detail,
         ),
       );
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       expect(
         find.descendant(
@@ -131,32 +132,32 @@ void main() {
     testWidgets(
         'renders correct icon, title and description when detail id is not null',
         (tester) async {
-      when(() => manageDetailCubit.state).thenReturn(
+      when(() => mockManageDetailCubit.state).thenReturn(
         ManageDetailState(
           status: ManageDetailStatus.success,
           detail: detail,
         ),
       );
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       expect(find.byIcon(Icons.home), findsOneWidget);
       expect(find.text('detailTitle'), findsOneWidget);
       expect(find.text('detailDescription'), findsOneWidget);
     });
 
-    testWidgets('shows SnackBar with info when exception occurs',
+    testWidgets('shows SnackBar with info when failure occured',
         (tester) async {
-      when(() => manageDetailCubit.state)
+      when(() => mockManageDetailCubit.state)
           .thenReturn(ManageDetailState(status: ManageDetailStatus.loading));
       whenListen(
-        manageDetailCubit,
+        mockManageDetailCubit,
         Stream.fromIterable(
           [ManageDetailState(status: ManageDetailStatus.failure)],
         ),
       );
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
       await tester.pump();
 
       expect(
@@ -168,26 +169,27 @@ void main() {
       );
     });
 
-    testWidgets('shows dialog when select icon button is tapped',
+    testWidgets('shows SelectIconDialog when select icon button is tapped',
         (tester) async {
-      when(() => manageDetailCubit.state).thenReturn(ManageDetailState());
+      when(() => mockManageDetailCubit.state).thenReturn(ManageDetailState());
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       await tester
           .tap(find.byKey(const Key('manageDetailPageSelectIconButtonKey')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.byType(SelectIconDialog), findsOneWidget);
     });
 
-    testWidgets('invokes cubit method when pops from dialog with icon',
+    testWidgets(
+        'invokes cubit method when pops from SelectIconDialog with icon',
         (tester) async {
-      when(() => manageDetailCubit.state).thenReturn(
+      when(() => mockManageDetailCubit.state).thenReturn(
         ManageDetailState(detail: detail),
       );
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       await tester
           .tap(find.byKey(const Key('manageDetailPageSelectIconButtonKey')));
@@ -196,34 +198,35 @@ void main() {
       await tester.tap(find.byKey(const Key('selectIconDialogIconKey0')));
       await tester.pumpAndSettle();
 
-      verify(() => manageDetailCubit.onIconChanged(detail.iconData)).called(1);
+      verify(() => mockManageDetailCubit.onIconChanged(detail.iconData))
+          .called(1);
     });
 
     testWidgets('invokes cubit method when title changes', (tester) async {
-      when(() => manageDetailCubit.state).thenReturn(ManageDetailState());
+      when(() => mockManageDetailCubit.state).thenReturn(ManageDetailState());
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       await tester.enterText(
         find.byKey(const Key('manageDetailPageTitleTextFieldKey')),
         'newTitle',
       );
 
-      verify(() => manageDetailCubit.onTitleChanged('newTitle')).called(1);
+      verify(() => mockManageDetailCubit.onTitleChanged('newTitle')).called(1);
     });
 
     testWidgets('invokes cubit method when description changes',
         (tester) async {
-      when(() => manageDetailCubit.state).thenReturn(ManageDetailState());
+      when(() => mockManageDetailCubit.state).thenReturn(ManageDetailState());
 
-      await tester.pumpView(manageDetailCubit: manageDetailCubit);
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
 
       await tester.enterText(
         find.byKey(const Key('manageDetailPageDescriptionTextFormFieldKey')),
         'newDescription',
       );
 
-      verify(() => manageDetailCubit.onDescriptionChanged('newDescription'))
+      verify(() => mockManageDetailCubit.onDescriptionChanged('newDescription'))
           .called(1);
     });
 
@@ -231,21 +234,21 @@ void main() {
         (tester) async {
       final navigator = MockNavigator();
       when(() => navigator.pop()).thenAnswer((_) async {});
-      when(() => manageDetailCubit.state).thenReturn(
+      when(() => mockManageDetailCubit.state).thenReturn(
         ManageDetailState(
           status: ManageDetailStatus.loading,
           detail: detail,
         ),
       );
       whenListen(
-          manageDetailCubit,
+          mockManageDetailCubit,
           Stream.fromIterable([
             ManageDetailState(
                 status: ManageDetailStatus.saveSuccess, detail: detail)
           ]));
 
       await tester.pumpView(
-          manageDetailCubit: manageDetailCubit,
+          manageDetailCubit: mockManageDetailCubit,
           view: MockNavigatorProvider(
             navigator: navigator,
             child: const ManageDetailView(),

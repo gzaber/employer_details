@@ -42,16 +42,16 @@ void main() {
       test('returns DetailModel created from Detail', () {
         expect(
           DetailModel.fromDetail(createDetail()),
-          createDetailModel(),
+          equals(createDetailModel()),
         );
       });
     });
 
-    group('to Detail', () {
+    group('toDetail', () {
       test('returns Detail created from DetailModel', () {
         expect(
           createDetailModel().toDetail(),
-          createDetail(),
+          equals(createDetail()),
         );
       });
     });

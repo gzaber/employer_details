@@ -245,7 +245,7 @@ class _DetailItem extends StatelessWidget {
                   MenuItem(
                     key: Key('editModePageShareAsTextMenuItemKey${detail.id}'),
                     icon: Icons.share,
-                    text: 'Share',
+                    text: 'Share as text',
                     onTap: () async {
                       await Share.share(
                         '${detail.title}\n${detail.description}',

@@ -8,7 +8,7 @@ class MockDetailsRepository extends Mock implements DetailsRepository {}
 
 void main() {
   group('DetailsOverviewCubit', () {
-    late DetailsRepository detailsRepository;
+    late DetailsRepository mockDetailsRepository;
 
     final details = [
       Detail(
@@ -26,10 +26,10 @@ void main() {
     ];
 
     DetailsOverviewCubit createCubit() =>
-        DetailsOverviewCubit(detailsRepository: detailsRepository);
+        DetailsOverviewCubit(detailsRepository: mockDetailsRepository);
 
     setUp(() {
-      detailsRepository = MockDetailsRepository();
+      mockDetailsRepository = MockDetailsRepository();
     });
 
     test('constructor works properly', () {
@@ -45,9 +45,9 @@ void main() {
 
     group('getDetails', () {
       blocTest<DetailsOverviewCubit, DetailsOverviewState>(
-          'emits state with success status and list of details',
+          'emits state with success status and list of details when read successfully',
           setUp: () {
-            when(() => detailsRepository.readAllDetails())
+            when(() => mockDetailsRepository.readAllDetails())
                 .thenAnswer((_) async => details);
           },
           build: () => createCubit(),
@@ -58,13 +58,13 @@ void main() {
                     status: DetailsOverviewStatus.success, details: details),
               ],
           verify: (_) {
-            verify(() => detailsRepository.readAllDetails()).called(1);
+            verify(() => mockDetailsRepository.readAllDetails()).called(1);
           });
 
       blocTest<DetailsOverviewCubit, DetailsOverviewState>(
-          'emits state with failure status',
+          'emits state with failure status when failure occured',
           setUp: () {
-            when(() => detailsRepository.readAllDetails())
+            when(() => mockDetailsRepository.readAllDetails())
                 .thenThrow(Exception());
           },
           build: () => createCubit(),
@@ -74,7 +74,7 @@ void main() {
                 DetailsOverviewState(status: DetailsOverviewStatus.failure),
               ],
           verify: (_) {
-            verify(() => detailsRepository.readAllDetails()).called(1);
+            verify(() => mockDetailsRepository.readAllDetails()).called(1);
           });
     });
   });

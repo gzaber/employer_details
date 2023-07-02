@@ -8,13 +8,13 @@ class MockSettingsRepository extends Mock implements SettingsRepository {}
 
 void main() {
   group('SettingsCubit', () {
-    late SettingsRepository settingsRepository;
+    late SettingsRepository mockSettingsRepository;
 
     SettingsCubit createCubit() =>
-        SettingsCubit(settingsRepository: settingsRepository);
+        SettingsCubit(settingsRepository: mockSettingsRepository);
 
     setUp(() {
-      settingsRepository = MockSettingsRepository();
+      mockSettingsRepository = MockSettingsRepository();
     });
 
     test('constructor works properly', () {
@@ -30,9 +30,9 @@ void main() {
 
     group('readSettings', () {
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with theme and color when successfully found',
+        'emits state with theme and color when read successfully',
         setUp: () {
-          when(() => settingsRepository.readSettings())
+          when(() => mockSettingsRepository.readSettings())
               .thenAnswer((_) => (true, 12345));
         },
         build: () => createCubit(),
@@ -40,14 +40,14 @@ void main() {
         expect: () =>
             [const SettingsState(isDarkTheme: true, colorSchemeCode: 12345)],
         verify: (_) {
-          verify(() => settingsRepository.readSettings()).called(1);
+          verify(() => mockSettingsRepository.readSettings()).called(1);
         },
       );
 
       blocTest<SettingsCubit, SettingsState>(
         'emits state with existing theme and color when settings not found',
         setUp: () {
-          when(() => settingsRepository.readSettings())
+          when(() => mockSettingsRepository.readSettings())
               .thenAnswer((_) => (null, null));
         },
         build: () => createCubit(),
@@ -56,20 +56,21 @@ void main() {
           const SettingsState(isDarkTheme: false, colorSchemeCode: 4284955319)
         ],
         verify: (_) {
-          verify(() => settingsRepository.readSettings()).called(1);
+          verify(() => mockSettingsRepository.readSettings()).called(1);
         },
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occurs',
+        'emits state with failure acknowledgement when failure occured',
         setUp: () {
-          when(() => settingsRepository.readSettings()).thenThrow(Exception());
+          when(() => mockSettingsRepository.readSettings())
+              .thenThrow(Exception());
         },
         build: () => createCubit(),
         act: (cubit) => cubit.readSettings(),
         expect: () => [const SettingsState(hasFailure: true)],
         verify: (_) {
-          verify(() => settingsRepository.readSettings()).called(1);
+          verify(() => mockSettingsRepository.readSettings()).called(1);
         },
       );
     });
@@ -78,28 +79,28 @@ void main() {
       blocTest<SettingsCubit, SettingsState>(
         'emits state with toggled theme',
         setUp: () {
-          when(() => settingsRepository.writeTheme(any()))
+          when(() => mockSettingsRepository.writeTheme(any()))
               .thenAnswer((_) async {});
         },
         build: () => createCubit(),
         act: (cubit) => cubit.toggleTheme(),
         expect: () => [const SettingsState(isDarkTheme: true)],
         verify: (_) {
-          verify(() => settingsRepository.writeTheme(true)).called(1);
+          verify(() => mockSettingsRepository.writeTheme(true)).called(1);
         },
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occurs',
+        'emits state with failure acknowledgement when failure occured',
         setUp: () {
-          when(() => settingsRepository.writeTheme(any()))
+          when(() => mockSettingsRepository.writeTheme(any()))
               .thenThrow(Exception());
         },
         build: () => createCubit(),
         act: (cubit) => cubit.toggleTheme(),
         expect: () => [const SettingsState(hasFailure: true)],
         verify: (_) {
-          verify(() => settingsRepository.writeTheme(true)).called(1);
+          verify(() => mockSettingsRepository.writeTheme(true)).called(1);
         },
       );
     });
@@ -108,28 +109,28 @@ void main() {
       blocTest<SettingsCubit, SettingsState>(
         'emits state with updated color scheme',
         setUp: () {
-          when(() => settingsRepository.writeColor(any()))
+          when(() => mockSettingsRepository.writeColor(any()))
               .thenAnswer((_) async {});
         },
         build: () => createCubit(),
         act: (cubit) => cubit.updateColorScheme(12345),
         expect: () => [const SettingsState(colorSchemeCode: 12345)],
         verify: (_) {
-          verify(() => settingsRepository.writeColor(12345)).called(1);
+          verify(() => mockSettingsRepository.writeColor(12345)).called(1);
         },
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occurs',
+        'emits state with failure acknowledgement when failure occured',
         setUp: () {
-          when(() => settingsRepository.writeColor(any()))
+          when(() => mockSettingsRepository.writeColor(any()))
               .thenThrow(Exception());
         },
         build: () => createCubit(),
         act: (cubit) => cubit.updateColorScheme(12345),
         expect: () => [const SettingsState(hasFailure: true)],
         verify: (_) {
-          verify(() => settingsRepository.writeColor(12345)).called(1);
+          verify(() => mockSettingsRepository.writeColor(12345)).called(1);
         },
       );
     });
