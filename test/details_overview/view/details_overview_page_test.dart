@@ -6,6 +6,8 @@ import 'package:employer_details/edit_mode/edit_mode.dart';
 import 'package:employer_details/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
 
@@ -28,6 +30,7 @@ extension PumpWidgetX on WidgetTester {
             ),
           ],
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: DetailsOverviewView(),
           ),
         ),
@@ -57,6 +60,7 @@ void main() {
         RepositoryProvider.value(
           value: mockDetailsRepository,
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: DetailsOverviewPage(),
           ),
         ),
@@ -145,7 +149,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(SnackBar),
-          matching: find.text('Something went wrong'),
+          matching: find.text(AppLocalizationsEn().failureMessage),
         ),
         findsOneWidget,
       );

@@ -22,7 +22,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         ),
       );
     } catch (_) {
-      emit(state.copyWith(hasFailure: true));
+      emit(const SettingsState());
     }
   }
 
@@ -32,6 +32,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       emit(state.copyWith(isDarkTheme: !state.isDarkTheme));
     } catch (_) {
       emit(state.copyWith(hasFailure: true));
+      emit(state.copyWith(hasFailure: false));
     }
   }
 
@@ -41,6 +42,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       emit(state.copyWith(colorSchemeCode: colorSchemeCode));
     } catch (_) {
       emit(state.copyWith(hasFailure: true));
+      emit(state.copyWith(hasFailure: false));
     }
   }
 }

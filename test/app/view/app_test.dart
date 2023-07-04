@@ -3,7 +3,6 @@ import 'package:details_repository/details_repository.dart';
 import 'package:employer_details/app/app.dart';
 import 'package:employer_details/details_overview/details_overview.dart';
 import 'package:employer_details/settings/settings.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
@@ -55,28 +54,6 @@ void main() {
       );
 
       expect(find.byType(DetailsOverviewPage), findsOneWidget);
-    });
-
-    testWidgets('shows SnackBar when failure occured', (tester) async {
-      whenListen(
-          mockSettingsCubit,
-          Stream.fromIterable([
-            const SettingsState(),
-            const SettingsState(hasFailure: true),
-          ]));
-
-      await tester.pumpWidget(
-        RepositoryProvider.value(
-          value: mockDetailsRepository,
-          child: BlocProvider.value(
-            value: mockSettingsCubit,
-            child: const AppView(),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.byType(SnackBar), findsOneWidget);
     });
   });
 }

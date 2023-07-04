@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 
 class HintCard extends StatelessWidget {
   const HintCard({
-    super.key,
+    Key? key,
     required this.title,
-    required this.upperText,
-    required this.lowerText,
-    required this.hintMenuVisualisations,
-  });
+    required this.children,
+  }) : super(key: key);
 
   final String title;
-  final String upperText;
-  final String lowerText;
-  final List<HintMenuVisualisation> hintMenuVisualisations;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -27,20 +23,7 @@ class HintCard extends StatelessWidget {
             const SizedBox(height: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(upperText),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...hintMenuVisualisations,
-                    ],
-                  ),
-                ),
-                Text(lowerText),
-              ],
+              children: [...children],
             ),
           ],
         ),
@@ -62,7 +45,7 @@ class HintMenuVisualisation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

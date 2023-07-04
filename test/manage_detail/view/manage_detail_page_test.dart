@@ -4,6 +4,8 @@ import 'package:details_repository/details_repository.dart';
 import 'package:employer_details/manage_detail/manage_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
 
@@ -16,6 +18,7 @@ extension PumpWidgetX on WidgetTester {
       BlocProvider.value(
         value: manageDetailCubit,
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           home: view,
         ),
       ),
@@ -41,6 +44,7 @@ void main() {
         RepositoryProvider.value(
           value: mockDetailsRepository,
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: Builder(
               builder: (context) => Scaffold(
                 floatingActionButton: FloatingActionButton(
@@ -65,6 +69,7 @@ void main() {
         RepositoryProvider.value(
           value: mockDetailsRepository,
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: ManageDetailPage(),
           ),
         ),
@@ -96,19 +101,10 @@ void main() {
 
       expect(
         find.descendant(
-            of: find.byType(AppBar), matching: find.text('Create detail')),
+            of: find.byType(AppBar),
+            matching: find.text(AppLocalizationsEn().createDetail)),
         findsOneWidget,
       );
-    });
-
-    testWidgets('renders CircularProgressIndicator when loading data',
-        (tester) async {
-      when(() => mockManageDetailCubit.state)
-          .thenReturn(ManageDetailState(status: ManageDetailStatus.loading));
-
-      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
-
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders correct AppBar text when id is not null',
@@ -124,9 +120,20 @@ void main() {
 
       expect(
         find.descendant(
-            of: find.byType(AppBar), matching: find.text('Update detail')),
+            of: find.byType(AppBar),
+            matching: find.text(AppLocalizationsEn().updateDetail)),
         findsOneWidget,
       );
+    });
+
+    testWidgets('renders CircularProgressIndicator when loading data',
+        (tester) async {
+      when(() => mockManageDetailCubit.state)
+          .thenReturn(ManageDetailState(status: ManageDetailStatus.loading));
+
+      await tester.pumpView(manageDetailCubit: mockManageDetailCubit);
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets(
@@ -163,7 +170,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(SnackBar),
-          matching: find.text('Something went wrong'),
+          matching: find.text(AppLocalizationsEn().failureMessage),
         ),
         findsOneWidget,
       );

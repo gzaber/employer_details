@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../manage_detail.dart';
 
@@ -40,8 +41,8 @@ class ManageDetailView extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           context.read<ManageDetailCubit>().state.detail.id == null
-              ? 'Create detail'
-              : 'Update detail',
+              ? AppLocalizations.of(context)!.createDetail
+              : AppLocalizations.of(context)!.updateDetail,
         ),
         actions: [
           IconButton(
@@ -59,7 +60,7 @@ class ManageDetailView extends StatelessWidget {
           if (state.status == ManageDetailStatus.failure) {
             CustomSnackBar.show(
               context: context,
-              text: 'Something went wrong',
+              text: AppLocalizations.of(context)!.failureMessage,
               backgroundColor: Theme.of(context).colorScheme.error,
             );
           }
@@ -100,7 +101,7 @@ class _DetailForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Title',
+          AppLocalizations.of(context)!.title,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         TextField(
@@ -116,7 +117,7 @@ class _DetailForm extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          'Description',
+          AppLocalizations.of(context)!.description,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         TextFormField(
@@ -148,8 +149,8 @@ class _SelectIconButton extends StatelessWidget {
       onPressed: () async {
         SelectIconDialog.show(
           context,
-          title: 'Select icon',
-          declineButtonText: 'Cancel',
+          title: AppLocalizations.of(context)!.selectIcon,
+          declineButtonText: AppLocalizations.of(context)!.cancel,
           icons: AppIcons.icons,
         ).then((iconData) {
           if (iconData != null) {
