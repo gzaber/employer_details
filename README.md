@@ -18,23 +18,23 @@ You can store for example: invoice data, car data, phone numbers, addresses etc.
 
 ## Screenshots
 
-[<img alt="details overview page" style="border: 1px solid grey" width="250px;"  src=".screenshots/details_overview.png" />](.screenshots/details_overview.png)
+[<img alt="details overview page" width="250px" style="border: 1px solid grey;" src=".screenshots/details_overview.png" />](.screenshots/details_overview.png)
 &nbsp;
-[<img alt="edit mode" width="250px" style="border: .5px solid grey"  src=".screenshots/edit_mode.png" />](.screenshots/edit_mode.png)
+[<img alt="edit mode" width="250px" style="border: 1px solid grey;"  src=".screenshots/edit_mode.png" />](.screenshots/edit_mode.png)
 &nbsp;
-[<img alt="settings" width="250px" style="border: .5px solid grey"  src=".screenshots/settings.png" />](.screenshots/settings.png)
+[<img alt="settings" width="250px" style="border: 1px solid grey;"  src=".screenshots/settings.png" />](.screenshots/settings.png)
 &nbsp;
-[<img alt="create details" width="250px" style="border: .5px solid grey"  src=".screenshots/create_detail.png" />](.screenshots/create_detail.png)
+[<img alt="create details" width="250px" style="border: 1px solid grey;"  src=".screenshots/create_detail.png" />](.screenshots/create_detail.png)
 &nbsp;
-[<img alt="update detail" width="250px" style="border: .5px solid grey"  src=".screenshots/update_detail.png" />](.screenshots/update_detail.png)
+[<img alt="update detail" width="250px" style="border: 1px solid grey;"  src=".screenshots/update_detail.png" />](.screenshots/update_detail.png)
 &nbsp;
-[<img alt="settings" width="250px" style="border: .5px solid grey"  src=".screenshots/vid_settings.gif" />](.screenshots/vid_settings.gif)
+[<img alt="settings" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid_settings.gif" />](.screenshots/vid_settings.gif)
 &nbsp;
-[<img alt="edit mode 1" width="250px" style="border: .5px solid grey"  src=".screenshots/vid1_edit_mode.gif" />](.screenshots/vid1_edit_mode.gif)
+[<img alt="edit mode 1" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid1_edit_mode.gif" />](.screenshots/vid1_edit_mode.gif)
 &nbsp;
-[<img alt="edit mode 1" width="250px" style="border: .5px solid grey"  src=".screenshots/vid2_edit_mode.gif" />](.screenshots/vid2_edit_mode.gif)
+[<img alt="edit mode 1" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid2_edit_mode.gif" />](.screenshots/vid2_edit_mode.gif)
 &nbsp;
-[<img alt="edit mode 1" width="250px" style="border: .5px solid grey"  src=".screenshots/vid3_edit_mode.gif" />](.screenshots/vid3_edit_mode.gif)
+[<img alt="edit mode 1" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid3_edit_mode.gif" />](.screenshots/vid3_edit_mode.gif)
 
 ## Features
 
