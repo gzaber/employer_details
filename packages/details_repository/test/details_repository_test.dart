@@ -69,7 +69,7 @@ void main() {
     });
 
     group('saveDetail', () {
-      test('saves Detail', () {
+      test('saves detail', () {
         when(() => mockDetailsApi.saveDetail(any())).thenAnswer((_) async {});
 
         expect(detailsRepository.saveDetail(detail1), completes);
@@ -78,7 +78,7 @@ void main() {
     });
 
     group('saveAllDetails', () {
-      test('saves list of Details', () {
+      test('saves list of details', () {
         when(() => mockDetailsApi.saveAllDetails(any()))
             .thenAnswer((_) async {});
 
@@ -89,7 +89,7 @@ void main() {
     });
 
     group('updateDetail', () {
-      test('updates Detail', () {
+      test('updates detail', () {
         when(() => mockDetailsApi.updateDetail(any())).thenAnswer((_) async {});
 
         expect(detailsRepository.updateDetail(detail1), completes);
@@ -98,7 +98,7 @@ void main() {
     });
 
     group('deleteDetail', () {
-      test('deletes Detail', () {
+      test('deletes detail', () {
         when(() => mockDetailsApi.deleteDetail(any())).thenAnswer((_) async {});
 
         expect(detailsRepository.deleteDetail(1), completes);
@@ -107,7 +107,7 @@ void main() {
     });
 
     group('readDetail', () {
-      test('returns Detail when found by id', () async {
+      test('returns detail when it is found', () async {
         when(() => mockDetailsApi.readDetail(any()))
             .thenAnswer((_) async => detail1);
 
@@ -115,7 +115,7 @@ void main() {
         verify(() => mockDetailsApi.readDetail(1)).called(1);
       });
 
-      test('returns null if Detail doesn\'t exist', () async {
+      test('returns null when detail is not found', () async {
         when(() => mockDetailsApi.readDetail(any()))
             .thenAnswer((_) async => null);
 
@@ -125,7 +125,7 @@ void main() {
     });
 
     group('readAllDetails', () {
-      test('returns list of Details', () async {
+      test('returns list of details', () async {
         when(() => mockDetailsApi.readAllDetails())
             .thenAnswer((_) async => [detail1, detail2]);
 
@@ -136,7 +136,7 @@ void main() {
         verify(() => mockDetailsApi.readAllDetails()).called(1);
       });
 
-      test('returns empty list when there are no Details', () async {
+      test('returns empty list when there are no details', () async {
         when(() => mockDetailsApi.readAllDetails()).thenAnswer((_) async => []);
 
         expect(await detailsRepository.readAllDetails(), isEmpty);

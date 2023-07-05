@@ -66,8 +66,7 @@ void main() {
       verify(() => mockSettingsCubit.updateColorScheme(4293467747)).called(1);
     });
 
-    testWidgets('shows SnackBar with info when failure occured',
-        (tester) async {
+    testWidgets('shows SnackBar with info when failure occurs', (tester) async {
       whenListen(
           mockSettingsCubit,
           Stream.fromIterable([

@@ -102,7 +102,7 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('renders ListView with Cards when loaded successfully',
+    testWidgets('renders ListView with Cards when data loaded successfully',
         (tester) async {
       when(() => mockDetailsOverviewCubit.state).thenReturn(
         DetailsOverviewState(
@@ -132,8 +132,7 @@ void main() {
       expect(find.byType(HintCard), findsOneWidget);
     });
 
-    testWidgets('shows SnackBar with info when failure occured',
-        (tester) async {
+    testWidgets('shows SnackBar with info when failure occurs', (tester) async {
       when(() => mockDetailsOverviewCubit.state).thenReturn(
           const DetailsOverviewState(status: DetailsOverviewStatus.loading));
       whenListen(

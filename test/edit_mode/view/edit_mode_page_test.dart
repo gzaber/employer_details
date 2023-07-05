@@ -160,8 +160,7 @@ void main() {
       expect(find.byType(HintCard), findsOneWidget);
     });
 
-    testWidgets('shows SnackBar with info when failure occured',
-        (tester) async {
+    testWidgets('shows SnackBar with info when failure occurs', (tester) async {
       when(() => mockEditModeCubit.state)
           .thenReturn(const EditModeState(status: EditModeStatus.loading));
       whenListen(

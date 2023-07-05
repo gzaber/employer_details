@@ -45,7 +45,7 @@ void main() {
 
     group('getDetails', () {
       blocTest<DetailsOverviewCubit, DetailsOverviewState>(
-          'emits state with success status and list of details when read successfully',
+          'emits state with success status and list of details when data read successfully',
           setUp: () {
             when(() => mockDetailsRepository.readAllDetails())
                 .thenAnswer((_) async => details);
@@ -62,7 +62,7 @@ void main() {
           });
 
       blocTest<DetailsOverviewCubit, DetailsOverviewState>(
-          'emits state with failure status when failure occured',
+          'emits state with failure status when failure occurs',
           setUp: () {
             when(() => mockDetailsRepository.readAllDetails())
                 .thenThrow(Exception());

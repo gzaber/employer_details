@@ -30,7 +30,7 @@ void main() {
 
     group('readSettings', () {
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with theme and color when read successfully',
+        'emits state with theme and color when data successfully read',
         setUp: () {
           when(() => mockSettingsRepository.readSettings())
               .thenAnswer((_) => (true, 12345));
@@ -61,7 +61,7 @@ void main() {
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with default theme and color when failure occured',
+        'emits state with default theme and color when failure occurs',
         setUp: () {
           when(() => mockSettingsRepository.readSettings())
               .thenThrow(Exception());
@@ -91,7 +91,7 @@ void main() {
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occured',
+        'emits state with failure acknowledgement when failure occurs',
         setUp: () {
           when(() => mockSettingsRepository.writeTheme(any()))
               .thenThrow(Exception());
@@ -124,7 +124,7 @@ void main() {
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occured',
+        'emits state with failure acknowledgement when failure occurs',
         setUp: () {
           when(() => mockSettingsRepository.writeColor(any()))
               .thenThrow(Exception());
