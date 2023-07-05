@@ -8,11 +8,11 @@ void main() {
   group('HintCard', () {
     const hintCard = HintCard(
       title: 'title',
-      upperText: 'upperText',
-      lowerText: 'lowerText',
-      hintMenuVisualisations: [
+      children: [
+        Text('upperText'),
         HintMenuVisualisation(icon: Icons.home, text: 'home'),
         HintMenuVisualisation(icon: Icons.delete, text: 'delete'),
+        Text('lowerText'),
       ],
     );
 

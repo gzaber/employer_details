@@ -8,6 +8,8 @@ import 'package:employer_details/manage_detail/manage_detail.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,6 +25,7 @@ extension PumpWidgetX on WidgetTester {
         child: BlocProvider.value(
           value: editModeCubit,
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: EditModeView(),
           ),
         ),
@@ -51,6 +54,7 @@ void main() {
         RepositoryProvider.value(
           value: mockDetailsRepository,
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: Builder(
               builder: (context) => Scaffold(
                 floatingActionButton: FloatingActionButton(
@@ -75,6 +79,7 @@ void main() {
         RepositoryProvider.value(
           value: mockDetailsRepository,
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: EditModePage(),
           ),
         ),
@@ -155,8 +160,7 @@ void main() {
       expect(find.byType(HintCard), findsOneWidget);
     });
 
-    testWidgets('shows SnackBar with info when failure occured',
-        (tester) async {
+    testWidgets('shows SnackBar with info when failure occurs', (tester) async {
       when(() => mockEditModeCubit.state)
           .thenReturn(const EditModeState(status: EditModeStatus.loading));
       whenListen(
@@ -172,7 +176,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(SnackBar),
-          matching: find.text('Something went wrong'),
+          matching: find.text(AppLocalizationsEn().failureMessage),
         ),
         findsOneWidget,
       );
@@ -442,7 +446,7 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageExportButtonKey')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Approve'));
+      await tester.tap(find.text(AppLocalizationsEn().approve));
       await tester.pumpAndSettle();
 
       verify(() => mockEditModeCubit.exportDetails(path: '', fileName: ''))
@@ -465,7 +469,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(SnackBar),
-          matching: find.text('Successfully exported'),
+          matching: find.text(AppLocalizationsEn().successfullyExported),
         ),
         findsOneWidget,
       );
@@ -484,7 +488,7 @@ void main() {
       await tester.tap(find.byKey(const Key('editModePageImportButtonKey')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Approve'));
+      await tester.tap(find.text(AppLocalizationsEn().approve));
       await tester.pumpAndSettle();
 
       verify(() => mockEditModeCubit.importDetails(pathToFile: '')).called(1);

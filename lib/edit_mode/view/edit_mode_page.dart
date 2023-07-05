@@ -1,8 +1,8 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:details_repository/details_repository.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../manage_detail/manage_detail.dart';
@@ -38,7 +38,7 @@ class EditModeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit mode'),
+        title: Text(AppLocalizations.of(context)!.editMode),
         actions: [
           IconButton(
             key: const Key('editModePageCreateDetailButtonKey'),
@@ -60,7 +60,7 @@ class EditModeView extends StatelessWidget {
               MenuItem(
                 key: const Key('editModePageShareButtonKey'),
                 icon: Icons.share,
-                text: 'Share config',
+                text: AppLocalizations.of(context)!.shareConfig,
                 onTap: () async {
                   context.read<EditModeCubit>().convertAllDetailsToXFile();
                   final xFileAllDetails =
@@ -73,16 +73,16 @@ class EditModeView extends StatelessWidget {
               MenuItem(
                 key: const Key('editModePageExportButtonKey'),
                 icon: Icons.upload,
-                text: 'Export config',
+                text: AppLocalizations.of(context)!.exportConfig,
                 onTap: () async {
                   ExportDetailsDialog.show(
                     context,
-                    title: 'Export details',
-                    selectPathText: 'Select folder',
-                    pathLabel: 'Path',
-                    fileNameLabel: 'File name',
-                    declineButtonText: 'Cancel',
-                    approveButtonText: 'Approve',
+                    title: AppLocalizations.of(context)!.exportDetails,
+                    selectPathText: AppLocalizations.of(context)!.selectFolder,
+                    pathLabel: AppLocalizations.of(context)!.path,
+                    fileNameLabel: AppLocalizations.of(context)!.fileName,
+                    declineButtonText: AppLocalizations.of(context)!.cancel,
+                    approveButtonText: AppLocalizations.of(context)!.approve,
                   ).then((value) {
                     if (value != null) {
                       context
@@ -95,15 +95,15 @@ class EditModeView extends StatelessWidget {
               MenuItem(
                 key: const Key('editModePageImportButtonKey'),
                 icon: Icons.download,
-                text: 'Import config',
+                text: AppLocalizations.of(context)!.importConfig,
                 onTap: () async {
                   ImportDetailsDialog.show(
                     context,
-                    title: 'Import details',
-                    selectFileText: 'Select file',
-                    fileLabel: 'File path',
-                    declineButtonText: 'Cancel',
-                    approveButtonText: 'Approve',
+                    title: AppLocalizations.of(context)!.importDetails,
+                    selectFileText: AppLocalizations.of(context)!.selectFile,
+                    fileLabel: AppLocalizations.of(context)!.filePath,
+                    declineButtonText: AppLocalizations.of(context)!.cancel,
+                    approveButtonText: AppLocalizations.of(context)!.approve,
                   ).then((value) {
                     if (value != null) {
                       context
@@ -116,15 +116,16 @@ class EditModeView extends StatelessWidget {
               MenuItem(
                 key: const Key('editModePageDeleteAllButtonKey'),
                 icon: Icons.delete_forever,
-                text: 'Delete all',
+                text: AppLocalizations.of(context)!.deleteAll,
                 onTap: () {
-                  DeleteDialog.show(context,
-                          title: 'Delete all details',
-                          contentText:
-                              'Are you sure you want to delete all the details?',
-                          declineButtonText: 'Decline',
-                          approveButtonText: 'Approve')
-                      .then((value) {
+                  DeleteDialog.show(
+                    context,
+                    title: AppLocalizations.of(context)!.deleteAllDetails,
+                    contentText:
+                        AppLocalizations.of(context)!.whetherToDeleteAll,
+                    declineButtonText: AppLocalizations.of(context)!.cancel,
+                    approveButtonText: AppLocalizations.of(context)!.approve,
+                  ).then((value) {
                     if (value == true) {
                       context.read<EditModeCubit>().deleteAllDetails();
                     }
@@ -140,14 +141,14 @@ class EditModeView extends StatelessWidget {
           if (state.status == EditModeStatus.failure) {
             CustomSnackBar.show(
               context: context,
-              text: 'Something went wrong',
+              text: AppLocalizations.of(context)!.failureMessage,
               backgroundColor: Theme.of(context).colorScheme.error,
             );
           }
           if (state.isExported == true) {
             CustomSnackBar.show(
               context: context,
-              text: 'Successfully exported',
+              text: AppLocalizations.of(context)!.successfullyExported,
               backgroundColor: Theme.of(context).colorScheme.primary,
             );
           }
@@ -159,20 +160,44 @@ class EditModeView extends StatelessWidget {
             );
           }
           return state.details.isEmpty
-              ? const Center(
-                  child: HintCard(
-                    title: 'No details yet',
-                    upperText: 'Go to:',
-                    hintMenuVisualisations: [
-                      HintMenuVisualisation(
-                          icon: Icons.add_circle_outline,
-                          text: 'Create detail'),
-                    ],
-                    lowerText: 'to create a new detail',
-                  ),
-                )
+              ? const _EmptyListInfo()
               : _DetailsReorderableList(details: state.details);
         },
+      ),
+    );
+  }
+}
+
+class _EmptyListInfo extends StatelessWidget {
+  const _EmptyListInfo();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        alignment: Alignment.topCenter,
+        child: HintCard(
+          title: AppLocalizations.of(context)!.noDetailsYet,
+          children: [
+            Text(AppLocalizations.of(context)!.goTo),
+            HintMenuVisualisation(
+              icon: Icons.add_circle_outline,
+              text: AppLocalizations.of(context)!.createDetail,
+            ),
+            Text(AppLocalizations.of(context)!.toCreate),
+            const SizedBox(height: 20),
+            Text(AppLocalizations.of(context)!.goTo),
+            HintMenuVisualisation(
+              icon: Icons.more_vert,
+              text: AppLocalizations.of(context)!.menu,
+            ),
+            HintMenuVisualisation(
+              icon: Icons.download,
+              text: AppLocalizations.of(context)!.importConfig,
+            ),
+            Text(AppLocalizations.of(context)!.toImport),
+          ],
+        ),
       ),
     );
   }
@@ -245,7 +270,7 @@ class _DetailItem extends StatelessWidget {
                   MenuItem(
                     key: Key('editModePageShareAsTextMenuItemKey${detail.id}'),
                     icon: Icons.share,
-                    text: 'Share as text',
+                    text: AppLocalizations.of(context)!.shareAsText,
                     onTap: () async {
                       await Share.share(
                         '${detail.title}\n${detail.description}',
@@ -255,7 +280,7 @@ class _DetailItem extends StatelessWidget {
                   MenuItem(
                     key: Key('editModePageEditMenuItemKey${detail.id}'),
                     icon: Icons.edit,
-                    text: 'Edit',
+                    text: AppLocalizations.of(context)!.edit,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -272,15 +297,18 @@ class _DetailItem extends StatelessWidget {
                   MenuItem(
                       key: Key('editModePageDeleteMenuItemKey${detail.id}'),
                       icon: Icons.delete,
-                      text: 'Delete',
+                      text: AppLocalizations.of(context)!.delete,
                       onTap: () {
-                        DeleteDialog.show(context,
-                                title: 'Delete detail',
-                                contentText:
-                                    'Are you sure you want to delete the detail?',
-                                declineButtonText: 'Decline',
-                                approveButtonText: 'Approve')
-                            .then((value) {
+                        DeleteDialog.show(
+                          context,
+                          title: AppLocalizations.of(context)!.deleteDetail,
+                          contentText:
+                              AppLocalizations.of(context)!.whetherToDeleteThis,
+                          declineButtonText:
+                              AppLocalizations.of(context)!.cancel,
+                          approveButtonText:
+                              AppLocalizations.of(context)!.approve,
+                        ).then((value) {
                           if (value == true) {
                             if (detail.id != null) {
                               context

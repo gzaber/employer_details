@@ -73,7 +73,7 @@ void main() {
       expect(pathTextField.controller?.text, equals(path));
     });
 
-    testWidgets('generates exported file name', (tester) async {
+    testWidgets('generates file name for export', (tester) async {
       await tester.pumpTest(builder: (_) => buildExportDetailsDialog());
       await tester.tap(find.byIcon(Icons.folder_open));
 

@@ -80,7 +80,7 @@ void main() {
 
     group('getDetail', () {
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with success status and detail when successfully found',
+          'emits state with success status and detail when detail successfully found',
           setUp: () {
             when(() => mockDetailsRepository.readDetail(any()))
                 .thenAnswer((_) async => detail);
@@ -107,7 +107,7 @@ void main() {
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with failure status when failure occured',
+          'emits state with failure status when failure occurs',
           setUp: () {
             when(() => mockDetailsRepository.readDetail(any()))
                 .thenThrow(Exception());
@@ -150,7 +150,7 @@ void main() {
           position: 0);
 
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with success status when detail saved successfully',
+          'emits state with success status when detail successfully saved',
           setUp: () {
             when(() => mockDetailsRepository.readAllDetails())
                 .thenAnswer((_) async => [detail]);
@@ -172,7 +172,7 @@ void main() {
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with failure status when failure occured',
+          'emits state with failure status when failure occurs',
           setUp: () {
             when(() => mockDetailsRepository.readAllDetails())
                 .thenAnswer((_) async => [detail]);
@@ -196,7 +196,7 @@ void main() {
 
     group('updateDetail', () {
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with success status when detail updated successfully',
+          'emits state with success status when detail successfully updated',
           setUp: () {
             when(() => mockDetailsRepository.updateDetail(any()))
                 .thenAnswer((_) async {});
@@ -215,7 +215,7 @@ void main() {
           });
 
       blocTest<ManageDetailCubit, ManageDetailState>(
-          'emits state with failure status when failure occured',
+          'emits state with failure status when failure occurs',
           setUp: () {
             when(() => mockDetailsRepository.updateDetail(any()))
                 .thenThrow(Exception());

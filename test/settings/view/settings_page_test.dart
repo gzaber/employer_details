@@ -3,6 +3,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:employer_details/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
 
@@ -12,6 +14,7 @@ extension PumpWidgetX on WidgetTester {
       BlocProvider.value(
         value: settingsCubit,
         child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           home: SettingsPage(),
         ),
       ),
@@ -60,8 +63,27 @@ void main() {
       await tester.tap(find.byKey(const Key('selectColorDialogColorBoxKey0')));
       await tester.pumpAndSettle();
 
-      verify(() => mockSettingsCubit.updateColorScheme(
-          mockSettingsCubit.state.colorSchemeCode)).called(1);
+      verify(() => mockSettingsCubit.updateColorScheme(4293467747)).called(1);
+    });
+
+    testWidgets('shows SnackBar with info when failure occurs', (tester) async {
+      whenListen(
+          mockSettingsCubit,
+          Stream.fromIterable([
+            const SettingsState(),
+            const SettingsState(hasFailure: true),
+          ]));
+
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
+      await tester.pump();
+
+      expect(
+        find.descendant(
+          of: find.byType(SnackBar),
+          matching: find.text(AppLocalizationsEn().failureMessage),
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

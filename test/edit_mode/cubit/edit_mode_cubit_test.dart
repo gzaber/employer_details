@@ -73,7 +73,7 @@ void main() {
           });
 
       blocTest<EditModeCubit, EditModeState>(
-          'emits state with failure status when failure occured',
+          'emits state with failure status when failure occurs',
           setUp: () {
             when(() => mockDetailsRepository.readAllDetails())
                 .thenThrow(Exception());
@@ -91,7 +91,7 @@ void main() {
 
     group('deleteDetail', () {
       blocTest<EditModeCubit, EditModeState>(
-          'emits state with success status and updated list of details when deleted successfully',
+          'emits state with success status and updated list of details when detail deleted successfully',
           setUp: () {
             when(() => mockDetailsRepository.deleteDetail(1))
                 .thenAnswer((_) async {});
@@ -119,7 +119,7 @@ void main() {
           });
 
       blocTest<EditModeCubit, EditModeState>(
-          'emits state with failure status when failure occured',
+          'emits state with failure status when failure occurs',
           setUp: () {
             when(() => mockDetailsRepository.deleteDetail(1))
                 .thenThrow(Exception());
@@ -145,7 +145,7 @@ void main() {
 
     group('deleteAllDetails', () {
       blocTest<EditModeCubit, EditModeState>(
-          'emits state with success status and empty list of details when deleted successfully',
+          'emits state with success status and empty list of details when all details deleted successfully',
           setUp: () {
             when(() => mockDetailsRepository.clearDetails())
                 .thenAnswer((_) async {});
@@ -168,7 +168,7 @@ void main() {
           });
 
       blocTest<EditModeCubit, EditModeState>(
-          'emits state with failure status when failure occured',
+          'emits state with failure status when failure occurs',
           setUp: () {
             when(() => mockDetailsRepository.clearDetails())
                 .thenThrow(Exception());
@@ -248,7 +248,7 @@ void main() {
       );
 
       blocTest<EditModeCubit, EditModeState>(
-        'emits state with failure status when failure occured',
+        'emits state with failure status when failure occurs',
         setUp: () {
           when(() => mockDetailsRepository.updateDetail(any()))
               .thenThrow(Exception());
@@ -310,7 +310,7 @@ void main() {
       );
 
       blocTest<EditModeCubit, EditModeState>(
-        'emits state with failure status when failure occured',
+        'emits state with failure status when failure occurs',
         setUp: () {
           when(() => mockDetailsRepository.writeDetailsToFile(
               pathToFile: any(named: 'pathToFile'),
@@ -338,7 +338,7 @@ void main() {
 
     group('importDetails', () {
       blocTest<EditModeCubit, EditModeState>(
-        'emits state with success status and list of details when read file successfully',
+        'emits state with success status and list of details when file read successfully',
         setUp: () {
           when(() => mockDetailsRepository.readDetailsFromFile(
                   pathToFile: any(named: 'pathToFile')))
@@ -367,7 +367,7 @@ void main() {
       );
 
       blocTest<EditModeCubit, EditModeState>(
-        'emits state with failure status when failure occured',
+        'emits state with failure status when failure occurs',
         setUp: () {
           when(() => mockDetailsRepository.readDetailsFromFile(
               pathToFile: any(named: 'pathToFile'))).thenThrow(Exception());
@@ -417,7 +417,7 @@ void main() {
       );
 
       blocTest<EditModeCubit, EditModeState>(
-        'emits state with failure status when failure occured',
+        'emits state with failure status when failure occurs',
         setUp: () {
           when(() => mockDetailsRepository.convertAllDetailsToXFile(any()))
               .thenThrow(Exception());

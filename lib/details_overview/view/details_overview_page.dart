@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../edit_mode/edit_mode.dart';
 import '../../settings/settings.dart';
@@ -35,7 +36,7 @@ class DetailsOverviewView extends StatelessWidget {
               MenuItem(
                 key: const Key('detailsOverviewPageEditModeMenuItemKey'),
                 icon: Icons.edit,
-                text: 'Edit mode',
+                text: AppLocalizations.of(context)!.editMode,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -48,7 +49,7 @@ class DetailsOverviewView extends StatelessWidget {
               MenuItem(
                 key: const Key('detailsOverviewPageSettingsMenuItemKey'),
                 icon: Icons.settings,
-                text: 'Settings',
+                text: AppLocalizations.of(context)!.settings,
                 onTap: () => Navigator.push(context, SettingsPage.route()),
               ),
             ],
@@ -61,7 +62,7 @@ class DetailsOverviewView extends StatelessWidget {
           if (state.status == DetailsOverviewStatus.failure) {
             CustomSnackBar.show(
               context: context,
-              text: 'Something went wrong',
+              text: AppLocalizations.of(context)!.failureMessage,
               backgroundColor: Theme.of(context).colorScheme.error,
             );
           }
@@ -74,23 +75,39 @@ class DetailsOverviewView extends StatelessWidget {
           }
           if (state.status == DetailsOverviewStatus.success) {
             return state.details.isEmpty
-                ? const Center(
-                    child: HintCard(
-                      title: 'No details yet',
-                      upperText: 'Go to:',
-                      hintMenuVisualisations: [
-                        HintMenuVisualisation(
-                            icon: Icons.more_vert, text: 'Menu'),
-                        HintMenuVisualisation(
-                            icon: Icons.edit, text: 'Edit mode'),
-                      ],
-                      lowerText: 'to add new details',
-                    ),
-                  )
+                ? const _EmptyListInfo()
                 : _DetailsList(details: state.details);
           }
           return Container();
         },
+      ),
+    );
+  }
+}
+
+class _EmptyListInfo extends StatelessWidget {
+  const _EmptyListInfo();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        alignment: Alignment.topCenter,
+        child: HintCard(
+          title: AppLocalizations.of(context)!.noDetailsYet,
+          children: [
+            Text(AppLocalizations.of(context)!.goTo),
+            HintMenuVisualisation(
+              icon: Icons.more_vert,
+              text: AppLocalizations.of(context)!.menu,
+            ),
+            HintMenuVisualisation(
+              icon: Icons.edit,
+              text: AppLocalizations.of(context)!.editMode,
+            ),
+            Text(AppLocalizations.of(context)!.toCreateOrImport),
+          ],
+        ),
       ),
     );
   }

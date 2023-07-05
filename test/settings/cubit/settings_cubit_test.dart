@@ -30,7 +30,7 @@ void main() {
 
     group('readSettings', () {
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with theme and color when read successfully',
+        'emits state with theme and color when data successfully read',
         setUp: () {
           when(() => mockSettingsRepository.readSettings())
               .thenAnswer((_) => (true, 12345));
@@ -61,14 +61,14 @@ void main() {
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occured',
+        'emits state with default theme and color when failure occurs',
         setUp: () {
           when(() => mockSettingsRepository.readSettings())
               .thenThrow(Exception());
         },
         build: () => createCubit(),
         act: (cubit) => cubit.readSettings(),
-        expect: () => [const SettingsState(hasFailure: true)],
+        expect: () => [const SettingsState()],
         verify: (_) {
           verify(() => mockSettingsRepository.readSettings()).called(1);
         },
@@ -91,14 +91,17 @@ void main() {
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occured',
+        'emits state with failure acknowledgement when failure occurs',
         setUp: () {
           when(() => mockSettingsRepository.writeTheme(any()))
               .thenThrow(Exception());
         },
         build: () => createCubit(),
         act: (cubit) => cubit.toggleTheme(),
-        expect: () => [const SettingsState(hasFailure: true)],
+        expect: () => [
+          const SettingsState(hasFailure: true),
+          const SettingsState(hasFailure: false),
+        ],
         verify: (_) {
           verify(() => mockSettingsRepository.writeTheme(true)).called(1);
         },
@@ -121,14 +124,17 @@ void main() {
       );
 
       blocTest<SettingsCubit, SettingsState>(
-        'emits state with failure acknowledgement when failure occured',
+        'emits state with failure acknowledgement when failure occurs',
         setUp: () {
           when(() => mockSettingsRepository.writeColor(any()))
               .thenThrow(Exception());
         },
         build: () => createCubit(),
         act: (cubit) => cubit.updateColorScheme(12345),
-        expect: () => [const SettingsState(hasFailure: true)],
+        expect: () => [
+          const SettingsState(hasFailure: true),
+          const SettingsState(hasFailure: false),
+        ],
         verify: (_) {
           verify(() => mockSettingsRepository.writeColor(12345)).called(1);
         },

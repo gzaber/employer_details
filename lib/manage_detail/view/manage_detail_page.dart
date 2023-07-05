@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:details_repository/details_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../manage_detail.dart';
 
@@ -36,44 +37,43 @@ class ManageDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          context.read<ManageDetailCubit>().state.detail.id == null
-              ? 'Create detail'
-              : 'Update detail',
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
+    return BlocConsumer<ManageDetailCubit, ManageDetailState>(
+      listener: (context, state) {
+        if (state.status == ManageDetailStatus.failure) {
+          CustomSnackBar.show(
+            context: context,
+            text: AppLocalizations.of(context)!.failureMessage,
+            backgroundColor: Theme.of(context).colorScheme.error,
+          );
+        }
+        if (state.status == ManageDetailStatus.saveSuccess) {
+          Navigator.pop(context, true);
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
               context.read<ManageDetailCubit>().state.detail.id == null
-                  ? context.read<ManageDetailCubit>().saveDetail()
-                  : context.read<ManageDetailCubit>().updateDetail();
-            },
+                  ? AppLocalizations.of(context)!.createDetail
+                  : AppLocalizations.of(context)!.updateDetail,
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () {
+                  context.read<ManageDetailCubit>().state.detail.id == null
+                      ? context.read<ManageDetailCubit>().saveDetail()
+                      : context.read<ManageDetailCubit>().updateDetail();
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: BlocConsumer<ManageDetailCubit, ManageDetailState>(
-        listener: (context, state) {
-          if (state.status == ManageDetailStatus.failure) {
-            CustomSnackBar.show(
-              context: context,
-              text: 'Something went wrong',
-              backgroundColor: Theme.of(context).colorScheme.error,
-            );
-          }
-          if (state.status == ManageDetailStatus.saveSuccess) {
-            Navigator.pop(context, true);
-          }
-        },
-        builder: (context, state) {
-          if (state.status == ManageDetailStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return const _DetailForm();
-        },
-      ),
+          body: state.status == ManageDetailStatus.loading
+              ? const Center(child: CircularProgressIndicator())
+              : const _DetailForm(),
+        );
+      },
     );
   }
 }
@@ -100,7 +100,7 @@ class _DetailForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Title',
+          AppLocalizations.of(context)!.title,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         TextField(
@@ -116,7 +116,7 @@ class _DetailForm extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          'Description',
+          AppLocalizations.of(context)!.description,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         TextFormField(
@@ -148,8 +148,8 @@ class _SelectIconButton extends StatelessWidget {
       onPressed: () async {
         SelectIconDialog.show(
           context,
-          title: 'Select icon',
-          declineButtonText: 'Cancel',
+          title: AppLocalizations.of(context)!.selectIcon,
+          declineButtonText: AppLocalizations.of(context)!.cancel,
           icons: AppIcons.icons,
         ).then((iconData) {
           if (iconData != null) {
