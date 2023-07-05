@@ -37,44 +37,43 @@ class ManageDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          context.read<ManageDetailCubit>().state.detail.id == null
-              ? AppLocalizations.of(context)!.createDetail
-              : AppLocalizations.of(context)!.updateDetail,
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
+    return BlocConsumer<ManageDetailCubit, ManageDetailState>(
+      listener: (context, state) {
+        if (state.status == ManageDetailStatus.failure) {
+          CustomSnackBar.show(
+            context: context,
+            text: AppLocalizations.of(context)!.failureMessage,
+            backgroundColor: Theme.of(context).colorScheme.error,
+          );
+        }
+        if (state.status == ManageDetailStatus.saveSuccess) {
+          Navigator.pop(context, true);
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
               context.read<ManageDetailCubit>().state.detail.id == null
-                  ? context.read<ManageDetailCubit>().saveDetail()
-                  : context.read<ManageDetailCubit>().updateDetail();
-            },
+                  ? AppLocalizations.of(context)!.createDetail
+                  : AppLocalizations.of(context)!.updateDetail,
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () {
+                  context.read<ManageDetailCubit>().state.detail.id == null
+                      ? context.read<ManageDetailCubit>().saveDetail()
+                      : context.read<ManageDetailCubit>().updateDetail();
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: BlocConsumer<ManageDetailCubit, ManageDetailState>(
-        listener: (context, state) {
-          if (state.status == ManageDetailStatus.failure) {
-            CustomSnackBar.show(
-              context: context,
-              text: AppLocalizations.of(context)!.failureMessage,
-              backgroundColor: Theme.of(context).colorScheme.error,
-            );
-          }
-          if (state.status == ManageDetailStatus.saveSuccess) {
-            Navigator.pop(context, true);
-          }
-        },
-        builder: (context, state) {
-          if (state.status == ManageDetailStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return const _DetailForm();
-        },
-      ),
+          body: state.status == ManageDetailStatus.loading
+              ? const Center(child: CircularProgressIndicator())
+              : const _DetailForm(),
+        );
+      },
     );
   }
 }
