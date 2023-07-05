@@ -18,7 +18,7 @@ You can store for example: invoice data, car data, phone numbers, addresses etc.
 
 ## Screenshots
 
-[<img alt="details overview page" style="border: .5px solid grey" width="250px"  src=".screenshots/details_overview.png" />](.screenshots/details_overview.png)
+[<img alt="details overview page" style="border: .5px solid grey" width="250px;"  src=".screenshots/details_overview.png" />](.screenshots/details_overview.png)
 &nbsp;
 [<img alt="edit mode" width="250px" style="border: .5px solid grey"  src=".screenshots/edit_mode.png" />](.screenshots/edit_mode.png)
 &nbsp;
