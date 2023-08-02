@@ -7,11 +7,11 @@
 A mobile application for storing frequently used data of the company where you work. You can store for example: invoice data, car data, phone numbers, addresses etc. It provides quick access to the most frequently needed data.
 
 &nbsp;
-[<img alt="video 1" width="250px" src=".recordings/vid1.gif" />](..recordings/vid1.gif)
+[<img alt="video 1" width="250px" src=".recordings/vid1.gif" />](.recordings/vid1.gif)
 &nbsp;
-[<img alt="video 2" width="250px" src=".recordings/vid2.gif" />](..recordings/vid2.gif)
+[<img alt="video 2" width="250px" src=".recordings/vid2.gif" />](.recordings/vid2.gif)
 &nbsp;
-[<img alt="video 3" width="250px" src=".recordings/vid3.gif" />](..recordings/vid3.gif)
+[<img alt="video 3" width="250px" src=".recordings/vid3.gif" />](.recordings/vid3.gif)
 
 ## Table of contents
 
