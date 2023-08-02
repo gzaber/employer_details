@@ -4,37 +4,22 @@
 
 # employer_details
 
-A mobile application for storing frequently used data of the company where you work.  
-You can store for example: invoice data, car data, phone numbers, addresses etc.
+A mobile application for storing frequently used data of the company where you work. You can store for example: invoice data, car data, phone numbers, addresses etc. It provides quick access to the most frequently needed data.
+
+&nbsp;
+[<img alt="video 1" width="250px" src=".recordings/vid1.gif" />](..recordings/vid1.gif)
+&nbsp;
+[<img alt="video 2" width="250px" src=".recordings/vid2.gif" />](..recordings/vid2.gif)
+&nbsp;
+[<img alt="video 3" width="250px" src=".recordings/vid3.gif" />](..recordings/vid3.gif)
 
 ## Table of contents
 
-- [Screenshots](#screenshots)
 - [Features](#features)
 - [Packages used](#packages-used)
 - [Setup](#setup)
 - [Test](#test)
 - [Run](#run)
-
-## Screenshots
-
-[<img alt="details overview page" width="250px" style="border: 1px solid grey;" src=".screenshots/details_overview.png" />](.screenshots/details_overview.png)
-&nbsp;
-[<img alt="edit mode" width="250px" style="border: 1px solid grey;"  src=".screenshots/edit_mode.png" />](.screenshots/edit_mode.png)
-&nbsp;
-[<img alt="settings" width="250px" style="border: 1px solid grey;"  src=".screenshots/settings.png" />](.screenshots/settings.png)
-&nbsp;
-[<img alt="create details" width="250px" style="border: 1px solid grey;"  src=".screenshots/create_detail.png" />](.screenshots/create_detail.png)
-&nbsp;
-[<img alt="update detail" width="250px" style="border: 1px solid grey;"  src=".screenshots/update_detail.png" />](.screenshots/update_detail.png)
-&nbsp;
-[<img alt="settings" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid_settings.gif" />](.screenshots/vid_settings.gif)
-&nbsp;
-[<img alt="edit mode 1" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid1_edit_mode.gif" />](.screenshots/vid1_edit_mode.gif)
-&nbsp;
-[<img alt="edit mode 1" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid2_edit_mode.gif" />](.screenshots/vid2_edit_mode.gif)
-&nbsp;
-[<img alt="edit mode 1" width="250px" style="border: 1px solid grey;"  src=".screenshots/vid3_edit_mode.gif" />](.screenshots/vid3_edit_mode.gif)
 
 ## Features
 
