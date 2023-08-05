@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class HintCard extends StatelessWidget {
   const HintCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.children,
-  }) : super(key: key);
+  });
 
   final String title;
   final List<Widget> children;

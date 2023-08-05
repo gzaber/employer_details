@@ -66,6 +66,42 @@ void main() {
       verify(() => mockSettingsCubit.updateColorScheme(4293467747)).called(1);
     });
 
+    testWidgets('renders light theme info', (tester) async {
+      when(() => mockSettingsCubit.state)
+          .thenReturn(const SettingsState(isDarkTheme: false));
+
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
+
+      expect(find.text(AppLocalizationsEn().light), findsOneWidget);
+    });
+
+    testWidgets('renders dark theme info', (tester) async {
+      when(() => mockSettingsCubit.state)
+          .thenReturn(const SettingsState(isDarkTheme: true));
+
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
+
+      expect(find.text(AppLocalizationsEn().dark), findsOneWidget);
+    });
+
+    testWidgets('renders color scheme info', (tester) async {
+      when(() => mockSettingsCubit.state).thenReturn(
+          SettingsState(colorSchemeCode: AppColors.colors.entries.first.key));
+
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
+
+      expect(find.text(AppColors.colors.entries.first.value), findsOneWidget);
+    });
+
+    testWidgets('renders info when color scheme is unknown', (tester) async {
+      when(() => mockSettingsCubit.state)
+          .thenReturn(const SettingsState(colorSchemeCode: 12345));
+
+      await tester.pumpView(settingsCubit: mockSettingsCubit);
+
+      expect(find.text(AppLocalizationsEn().unknown), findsOneWidget);
+    });
+
     testWidgets('shows SnackBar with info when failure occurs', (tester) async {
       whenListen(
           mockSettingsCubit,
